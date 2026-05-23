@@ -1,7 +1,8 @@
 import streamlit as st
 from datetime import date, datetime
 from tabs.settings import apply_settings
-
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def run_progress():
     st.title("📊 Progress")
@@ -145,6 +146,49 @@ def run_progress():
         # Sort by most studied
         sorted_subjects = sorted(subject_totals.items(), key=lambda x: x[1], reverse=True)
         total_studied = sum(subject_totals.values())
+
+        # -------------------------------------------------------------------
+        # WORKLOAD COMPLETION PIE CHART
+        # -------------------------------------------------------------------
+
+        # Calculate remaining homework minutes
+        remaining_minutes = 0
+
+        for task in st.session_state.tasks:
+            if task.get("status") != "Done":
+                if "minutes" in task:
+                    remaining_minutes += task["minutes"]
+                elif "hours" in task:
+                    remaining_minutes += int(task["hours"] * 60)
+
+        # Total overall workload
+        overall_total = total_studied + remaining_minutes
+
+        # Only show chart if there is data
+        if overall_total > 0:
+            st.write("### 🥧 Study Progress")
+
+            labels = ["Studied", "Remaining"]
+            sizes = [total_studied, remaining_minutes]
+
+            fig, ax = plt.subplots(figsize=(2, 2))
+
+            ax.pie(
+                sizes,
+                labels=labels,
+                autopct="%1.1f%%",
+                startangle=90
+            )
+
+            ax.axis("equal")
+
+            st.pyplot(fig, use_container_width=False)
+
+            studied_pct = int((total_studied / overall_total) * 100)
+
+            st.caption(
+                f"You've completed approximately {studied_pct}% of your total estimated workload."
+            )
 
         total_h, total_m = divmod(total_studied, 60)
         st.metric("Total Study Time", f"{total_h}h {total_m}m" if total_h > 0 else f"{total_m}m")
