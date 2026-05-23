@@ -10,7 +10,7 @@ def init_state():
 
         # Study tools
         "flashcards": [],
-        "current_quiz": [],
+        "quizzes": [],
         "quiz_scores": [],
 
         # Progress

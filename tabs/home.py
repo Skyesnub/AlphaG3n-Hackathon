@@ -24,34 +24,39 @@ def run_home_page():
     '''
     st.subheader("📊 Quick Summary")
 
+    #compute total tasks
     total_tasks = len(st.session_state.tasks)
     completed_tasks = 0
-
     for task in st.session_state.tasks:
         if task.get("status") == "Done":
             completed_tasks += 1
 
+    #compute total study minutes
     total_study_minutes = 0
-
     for session in st.session_state.study_sessions:
         total_study_minutes += session.get("minutes", 0)
 
+    #compute average quiz score
     average_quiz_score = 0
-
     if len(st.session_state.quiz_scores) > 0:
         average_quiz_score = sum(st.session_state.quiz_scores) / len(st.session_state.quiz_scores)
     else:
         average_quiz_score = "N/A"
         
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.metric("Total Tasks", total_tasks)
-
-    with col2:
-        st.metric("Completed Tasks", completed_tasks)
-
-    with col3:
-        st.metric("Study Minutes", total_study_minutes)
-
-    st.metric("Average Quiz Score", average_quiz_score)
+    #check if you're new or not
+    
+    if (total_tasks == 0 and total_study_minutes == 0 and total_study_minutes == 0 and average_quiz_score == "N/A"):
+        #no stats yet, get started!
+        st.write("You don't have any stats now. Get started now!")
+        pass
+    
+    else:
+        #display score
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Total Tasks", total_tasks)
+        with col2:
+            st.metric("Completed Tasks", completed_tasks)
+        with col3:
+            st.metric("Study Minutes", total_study_minutes)
+        st.metric("Average Quiz Score", average_quiz_score)
