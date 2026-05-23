@@ -1,8 +1,8 @@
-import streamlit as st
-import re
-import random
-
 def run_study_tools():
+    import streamlit as st
+    import re
+    import random
+
     st.title("🧠 Study Tools")
     st.write("Paste your notes, then generate flashcards or quiz questions.")
 
