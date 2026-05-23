@@ -63,19 +63,20 @@ def run_settings():
 
     st.subheader("🎨 Appearance")
 
-    # Using key= means Streamlit automatically syncs the widget value
-    # with session_state — no manual assignment needed.
+    # Read current values from session_state as the starting point
     dark_mode = st.toggle(
         "Dark Mode",
-        key="dark_mode",  # st.session_state.dark_mode is updated automatically
+        value=st.session_state.dark_mode,  # no key=, just value=
     )
+    st.session_state.dark_mode = dark_mode  # manually save it back
 
     background = st.selectbox(
         "Background",
         options=list(BACKGROUND_OPTIONS.keys()),
-        key="background",  # st.session_state.background is updated automatically
-        disabled=dark_mode,
+        index=list(BACKGROUND_OPTIONS.keys()).index(st.session_state.background),
+        disabled=dark_mode,  # no key=, just value= and index=
     )
+    st.session_state.background = background  # manually save it back
 
     if dark_mode:
         st.caption("Background is disabled while Dark Mode is on.")
