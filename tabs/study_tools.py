@@ -3,7 +3,21 @@ import re
 import random
 
 '''
-Study Tools:
+Study Tools
+
+Input:
+-takes in user copy-pasted prompt
+-looks for patterns such as __ is __ or __ : __, stopping section at '.', '\n'
+
+Flashcards:
+-states
+    -flashcards -> list of tuples, tuple = (question, answer), dtype = string for both
+    -total_flashcard_scores -> list of 0/1, wrong/right (can also be cleared using separate button)
+    -cur_flashcard_scores -> list of 0/1, can be cleared by user after each flashcard session
+    -flashcard_idx -> which index flashcard you are on, int
+    -
+
+Quizzes:
 
 
 
