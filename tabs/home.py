@@ -1,6 +1,16 @@
 import streamlit as st
 from datetime import date
 
+'''
+Home page:
+-welcome back sign
+-shows quick summary (total tasks, total study min, and average quiz scores)
+-if there's no stats yet, don't show any
+'''
+
+
+
+
 
 def run_home_page():
     st.title("🏠 Home Page")
@@ -18,9 +28,6 @@ def run_home_page():
 
     '''
     QUICK SUMMARY:
-    -show total tasks, total study min, and average quiz scores
-    -
-    
     '''
     st.subheader("📊 Quick Summary")
 

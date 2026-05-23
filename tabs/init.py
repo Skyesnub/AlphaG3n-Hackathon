@@ -1,5 +1,11 @@
 import streamlit as st
 
+'''
+Initializes all the states
+'''
+
+
+
 def init_state():
     defaults = {
         # Planner
