@@ -1,7 +1,7 @@
 import streamlit as st
 import re
 import random
-
+from tabs.settings import apply_settings
 '''
 Study Tools
 
@@ -47,6 +47,8 @@ Review:
 
 
 def run_study_tools():
+    apply_settings()
+    
     st.title("🧠 Study Tools")
     st.write("Paste notes, generate flashcards/quizzes, and track what you know.")
 
