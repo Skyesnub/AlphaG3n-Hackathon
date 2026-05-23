@@ -189,7 +189,7 @@ def run_study_tools():
             if answer != correct_answer and answer not in wrong_answers:
                 wrong_answers.append(answer)
 
-        random.shuffle(wrong_answers)
+        # random.shuffle(wrong_answers)
 
         options = wrong_answers[:3]
 
@@ -197,7 +197,7 @@ def run_study_tools():
             options.append("None of these")
 
         options.append(correct_answer)
-        random.shuffle(options)
+        # random.shuffle(options)
 
         return options
 
