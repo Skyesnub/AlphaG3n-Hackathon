@@ -56,8 +56,6 @@ def run_study_tools():
         "flashcards": [],
         "know_flashcards": [],
         "review_flashcards": [],
-        "total_flashcard_scores": [],
-        "cur_flashcard_scores": [],
         "flashcard_idx": 0,
         "show_flashcard_answer": False,
 
@@ -80,9 +78,9 @@ def run_study_tools():
         if key not in st.session_state:
             st.session_state[key] = value
 
-    # -----------------------------
-    # Helper functions
-    # -----------------------------
+    ##################################################
+    '''*************** HELPER FUNCTIONS ******************'''
+    ##################################################
     def extract_pairs_from_notes(text):
         """
         Looks for patterns like:
@@ -126,7 +124,7 @@ def run_study_tools():
 
                     # Avoid terrible flashcards like giant paragraphs as terms
                     if len(term) > 1 and len(definition) > 1 and len(term.split()) <= 12:
-                        question = f"What is {term}?"
+                        question = term
                         answer = definition
                         pairs.append((question, answer))
 
@@ -168,19 +166,6 @@ def run_study_tools():
 
         return result
 
-    def make_hint(answer):
-        answer = answer.strip()
-
-        if len(answer) == 0:
-            return "No hint available."
-
-        words = answer.split()
-
-        if len(words) == 1:
-            return f"Hint: starts with '{answer[0]}' and has {len(answer)} letters."
-
-        return f"Hint: starts with '{words[0][0]}' and has {len(words)} words."
-
     def make_multiple_choice_options(correct_answer):
         all_answers = [answer for question, answer in st.session_state.quizzes]
         wrong_answers = []
@@ -189,7 +174,7 @@ def run_study_tools():
             if answer != correct_answer and answer not in wrong_answers:
                 wrong_answers.append(answer)
 
-        # random.shuffle(wrong_answers)
+        random.shuffle(wrong_answers)
 
         options = wrong_answers[:3]
 
@@ -197,13 +182,13 @@ def run_study_tools():
             options.append("None of these")
 
         options.append(correct_answer)
-        # random.shuffle(options)
+        random.shuffle(options)
 
         return options
 
-    # -----------------------------
-    # Input section
-    # -----------------------------
+    ##################################################
+    '''*************** INPUTS ******************'''
+    ##################################################
     st.subheader("📥 Paste Notes")
 
     notes = st.text_area(
@@ -224,9 +209,10 @@ def run_study_tools():
 
     st.divider()
 
-    # -----------------------------
-    # Flashcards
-    # -----------------------------
+    ##################################################
+    '''*************** FLASHCARDS ******************'''
+    ##################################################
+    
     st.subheader("🃏 Flashcards")
 
     flashcard_amount = st.slider(
@@ -245,7 +231,8 @@ def run_study_tools():
         else:
             generated = repeat_to_amount(extracted_pairs, flashcard_amount)
 
-            st.session_state.flashcards = generated
+            for gen in generated:
+                st.session_state.flashcards.append(gen)
             st.session_state.flashcard_idx = 0
             st.session_state.show_flashcard_answer = False
             st.session_state.cur_flashcard_scores = []
@@ -289,9 +276,6 @@ def run_study_tools():
 
         with col3:
             if st.button("✅ Know"):
-                st.session_state.cur_flashcard_scores.append(1)
-                st.session_state.total_flashcard_scores.append(1)
-
                 card = (question, answer)
                 if card not in st.session_state.know_flashcards:
                     st.session_state.know_flashcards.append(card)
@@ -307,9 +291,6 @@ def run_study_tools():
 
         with col4:
             if st.button("🔁 Review"):
-                st.session_state.cur_flashcard_scores.append(0)
-                st.session_state.total_flashcard_scores.append(0)
-
                 card = (question, answer)
                 if card not in st.session_state.review_flashcards:
                     st.session_state.review_flashcards.append(card)
@@ -323,32 +304,15 @@ def run_study_tools():
                 st.session_state.show_flashcard_answer = False
                 st.rerun()
 
-        cur_flash_acc = get_accuracy(st.session_state.cur_flashcard_scores)
-        total_flash_acc = get_accuracy(st.session_state.total_flashcard_scores)
-
-        st.write(f"Current flashcard accuracy: **{cur_flash_acc}%**" if cur_flash_acc != "N/A" else "Current flashcard accuracy: **N/A**")
-        st.write(f"Total flashcard accuracy: **{total_flash_acc}%**" if total_flash_acc != "N/A" else "Total flashcard accuracy: **N/A**")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            if st.button("🧹 Clear Current Flashcard Scores"):
-                st.session_state.cur_flashcard_scores = []
-                st.rerun()
-
-        with col2:
-            if st.button("🗑️ Clear Total Flashcard Scores"):
-                st.session_state.total_flashcard_scores = []
-                st.rerun()
-
     else:
         st.info("No flashcards generated yet.")
 
     st.divider()
 
-    # -----------------------------
-    # Quizzes
-    # -----------------------------
+    ##################################################
+    '''*************** QUIZZES ******************'''
+    ##################################################
+    
     st.subheader("📝 Quizzes")
 
     quiz_amount = st.slider(
@@ -373,7 +337,8 @@ def run_study_tools():
         else:
             generated = repeat_to_amount(extracted_pairs, quiz_amount)
 
-            st.session_state.quizzes = generated
+            for gen in generated:
+                st.session_state.quizzes.append(gen)
             st.session_state.quiz_idx = 0
             st.session_state.cur_quiz_scores = []
             st.session_state.quiz_answer_submitted = False
@@ -398,22 +363,29 @@ def run_study_tools():
                 st.rerun()
 
         else:
-            question, answer = st.session_state.quizzes[idx]
-
             st.write(f"Question **{idx + 1}** of **{len(st.session_state.quizzes)}**")
-            st.info(question)
-
-            if st.button("💡 Hint"):
-                st.warning(make_hint(answer))
-
             user_answer = ""
 
             if quiz_mode == "Free Response":
+                answer, question = st.session_state.quizzes[idx]
+                st.info(question)
                 user_answer = st.text_input("Your answer:", key=f"free_response_{idx}")
 
             else:
-                options = make_multiple_choice_options(answer)
-                user_answer = st.radio("Choose one:", options, key=f"multiple_choice_{idx}")
+                question, answer = st.session_state.quizzes[idx]
+                st.info(question)
+                option_key = f"multiple_choice_options_{idx}"
+
+                if option_key not in st.session_state:
+                    st.session_state[option_key] = make_multiple_choice_options(answer)
+
+                options = st.session_state[option_key]
+
+                user_answer = st.radio(
+                    "Choose one:",
+                    options,
+                    key=f"multiple_choice_{idx}"
+                )
 
             if not st.session_state.quiz_answer_submitted:
                 if st.button("✅ Submit Answer"):
@@ -466,9 +438,9 @@ def run_study_tools():
 
     st.divider()
 
-    # -----------------------------
-    # Review section
-    # -----------------------------
+    ##################################################
+    '''*************** REVIEW ******************'''
+    ##################################################
     st.subheader("📚 Review All Generated Items")
 
     tab1, tab2, tab3 = st.tabs(["All Flashcards", "Know / Review", "All Quiz Questions"])
