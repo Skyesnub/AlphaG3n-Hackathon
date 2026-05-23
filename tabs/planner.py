@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import date, datetime, timedelta
 from tabs.settings import apply_settings
 import calendar
+import time
 
 
 def fmt_time(minutes):
@@ -165,13 +166,11 @@ def run_planner():
     st.divider()
 
     # -----------------------------------------------------------------------
-    # AVAILABILITY INPUT — free window per day (start time to end time)
-    # Stored in session_state as {day: {"start": minutes, "end": minutes}}
+    # AVAILABILITY INPUT
     # -----------------------------------------------------------------------
     st.subheader("⏰ Your Daily Availability")
     st.write("Set the time window you're free to study each day.")
 
-    # Default: 4 PM to 8 PM on weekdays, 10 AM to 6 PM on weekends
     if "availability" not in st.session_state:
         st.session_state.availability = {
             "Monday":    {"start": 16 * 60, "end": 20 * 60},
@@ -185,21 +184,17 @@ def run_planner():
 
     days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-    # Show 7 columns, one per day
     cols = st.columns(7)
     for col, day in zip(cols, days_of_week):
         with col:
             col.markdown(f"**{day[:3]}**")
-
             current = st.session_state.availability.get(day, {"start": 16 * 60, "end": 20 * 60})
-
-            # Convert stored minutes-since-midnight back to a time object for the widget
             start_h, start_m = divmod(current["start"], 60)
             end_h, end_m = divmod(current["end"], 60)
 
             start_time = col.time_input(
                 "From", value=datetime(2000, 1, 1, start_h, start_m).time(),
-                key=f"avail_start_{day}", step=600  # 10 min steps
+                key=f"avail_start_{day}", step=600
             )
             end_time = col.time_input(
                 "To", value=datetime(2000, 1, 1, end_h, end_m).time(),
@@ -209,10 +204,9 @@ def run_planner():
             start_mins = time_to_minutes(start_time)
             end_mins = time_to_minutes(end_time)
 
-            # Make sure end is after start
             if end_mins <= start_mins:
                 col.caption("⚠️ End must be after start")
-                end_mins = start_mins  # treat as 0 free time
+                end_mins = start_mins
 
             st.session_state.availability[day] = {"start": start_mins, "end": end_mins}
 
@@ -220,9 +214,6 @@ def run_planner():
 
     # -----------------------------------------------------------------------
     # STUDY SCHEDULE GENERATOR
-    # Places tasks into the free window each day, adding 15 min breaks
-    # between assignments longer than 45 minutes.
-    # Shows exact start/end times for each block.
     # -----------------------------------------------------------------------
     st.subheader("📆 Generated Study Schedule")
 
@@ -242,9 +233,6 @@ def run_planner():
             x["due_date"]
         ))
 
-        # For each day in the next 60 days, track a "cursor" = next available
-        # minute within the free window.
-        # day_state[date] = {"cursor": minutes_since_midnight, "end": minutes_since_midnight}
         day_state = {}
         for i in range(60):
             d = today + timedelta(days=i)
@@ -253,12 +241,9 @@ def run_planner():
             day_state[d] = {
                 "cursor": window["start"],
                 "end": window["end"],
-                # track whether the previous block on this day was >45 min
-                # so we know to insert a break
                 "last_block_long": False,
             }
 
-        # schedule[date] = list of {name, start_min, end_min, priority, is_break}
         schedule = {}
 
         for task in tasks_to_schedule:
@@ -282,7 +267,6 @@ def run_planner():
                 if free_in_window < 10:
                     continue
 
-                # Insert a 15 min break if the previous block on this day was >45 min
                 if state["last_block_long"] and free_in_window >= 25:
                     schedule.setdefault(d, []).append({
                         "name": "☕ Break",
@@ -299,7 +283,6 @@ def run_planner():
                     state["cursor"] = cursor
                     continue
 
-                # How much of this task can we fit today?
                 assignable = min(free_in_window, mins_left)
                 if assignable < 10:
                     state["cursor"] = cursor
@@ -313,9 +296,7 @@ def run_planner():
                     "is_break": False,
                 })
 
-                # Mark if this block was long (>45 min) so next task gets a break
                 state["last_block_long"] = assignable > 45
-
                 cursor += assignable
                 state["cursor"] = cursor
                 mins_left -= assignable
@@ -326,9 +307,6 @@ def run_planner():
                     f"before its due date. {fmt_time(mins_left)} couldn't be scheduled."
                 )
 
-        # -----------------------------------------------------------------------
-        # DISPLAY SCHEDULE CALENDAR
-        # -----------------------------------------------------------------------
         sched_month = st.selectbox(
             "Month",
             options=[date(today.year, m, 1).strftime("%B %Y") for m in range(1, 13)],
@@ -339,7 +317,6 @@ def run_planner():
         sched_year = sched_month_date.year
         sched_month_num = sched_month_date.month
 
-        # Filter to selected month, exclude breaks from calendar dots
         sched_by_day = {}
         for d, blocks in schedule.items():
             if d.year == sched_year and d.month == sched_month_num:
@@ -367,9 +344,6 @@ def run_planner():
                 else:
                     col.write(str(day))
 
-        # -----------------------------------------------------------------------
-        # DETAILED DAILY BREAKDOWN WITH TIMES
-        # -----------------------------------------------------------------------
         st.write("#### 📝 Daily Schedule")
         sorted_days = sorted(sched_by_day.items())
         if not sorted_days:
@@ -387,5 +361,114 @@ def run_planner():
                     else:
                         color = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(block["priority"], "⚪")
                         st.write(f"  {color} {block['name']} — {start_str} to {end_str} ({fmt_time(duration)})")
+
+    st.divider()
+
+    # -----------------------------------------------------------------------
+    # STUDY TIMER
+    # Pick an assignment, hit Start. The start timestamp is saved to
+    # session_state so it survives Streamlit reruns. When you hit Stop,
+    # elapsed time is calculated and saved to study_sessions for progress.py.
+    # -----------------------------------------------------------------------
+    st.subheader("⏱ Study Timer")
+
+    # Ensure timer state keys exist
+    if "timer_running" not in st.session_state:
+        st.session_state.timer_running = False
+    if "timer_start" not in st.session_state:
+        st.session_state.timer_start = None
+    if "timer_subject" not in st.session_state:
+        st.session_state.timer_subject = None
+
+    # Build subject list from tasks — fall back to a free-text option
+    task_names = [t["name"] for t in st.session_state.tasks] if st.session_state.tasks else []
+    subject_options = task_names + ["Other (type below)"]
+
+    if not st.session_state.timer_running:
+        # ----- TIMER NOT RUNNING — show setup -----
+        selected_subject = st.selectbox(
+            "What are you studying?",
+            options=subject_options,
+            key="timer_subject_select",
+        )
+
+        # If "Other" is chosen, show a text input for a custom subject name
+        if selected_subject == "Other (type below)":
+            custom_subject = st.text_input("Subject name", placeholder="e.g. Chemistry")
+            subject_to_use = custom_subject.strip() if custom_subject.strip() else "Other"
+        else:
+            subject_to_use = selected_subject
+
+        if st.button("▶️ Start Timer", type="primary"):
+            st.session_state.timer_running = True
+            st.session_state.timer_start = datetime.now().timestamp()  # Unix timestamp survives reruns
+            st.session_state.timer_subject = subject_to_use
+            st.rerun()
+
+    else:
+        # ----- TIMER IS RUNNING — show elapsed time and stop button -----
+        elapsed_seconds = datetime.now().timestamp() - st.session_state.timer_start
+        elapsed_minutes = elapsed_seconds / 60
+
+        elapsed_h = int(elapsed_seconds // 3600)
+        elapsed_m = int((elapsed_seconds % 3600) // 60)
+        elapsed_s = int(elapsed_seconds % 60)
+
+        st.info(
+            f"⏳ Studying **{st.session_state.timer_subject}**  \n"
+            f"Elapsed: **{elapsed_h:02d}:{elapsed_m:02d}:{elapsed_s:02d}**"
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("⏹ Stop & Save", type="primary"):
+                # Only save if at least 1 minute has passed
+                rounded_minutes = max(1, round(elapsed_minutes))
+
+                st.session_state.study_sessions.append({
+                    "subject": st.session_state.timer_subject,
+                    "minutes": rounded_minutes,
+                    "date": date.today().strftime("%Y-%m-%d"),
+                })
+
+                saved_subject = st.session_state.timer_subject
+
+                # Clear timer state
+                st.session_state.timer_running = False
+                st.session_state.timer_start = None
+                st.session_state.timer_subject = None
+
+                st.success(f"✅ Saved {fmt_time(rounded_minutes)} of studying **{saved_subject}**!")
+                st.rerun()
+
+        with col2:
+            if st.button("🗑 Discard"):
+                # Stop without saving
+                st.session_state.timer_running = False
+                st.session_state.timer_start = None
+                st.session_state.timer_subject = None
+                st.rerun()
+
+        # Auto-refresh every 5 seconds so the elapsed time updates visually
+        time.sleep(1)
+        st.rerun()
+
+    # -----------------------------------------------------------------------
+    # STUDY SESSION LOG
+    # Shows all logged sessions so the user can see their history
+    # and manually delete any bad entries.
+    # -----------------------------------------------------------------------
+    if st.session_state.study_sessions:
+        st.write("#### 📋 Session Log")
+        for i, session in enumerate(reversed(st.session_state.study_sessions)):
+            idx = len(st.session_state.study_sessions) - 1 - i  # real index for deletion
+            col1, col2 = st.columns([4, 1])
+            with col1:
+                st.write(f"📖 **{session['subject']}** — {fmt_time(session['minutes'])} on {session['date']}")
+            with col2:
+                if st.button("🗑", key=f"del_session_{idx}"):
+                    st.session_state.study_sessions.pop(idx)
+                    st.rerun()
 
     apply_settings()

@@ -27,6 +27,11 @@ def init_state():
         # Settings
         "dark_mode": False,
         "background": "Default",
+
+        # Timer
+        "timer_running": False,
+        "timer_start": None,
+        "timer_subject": None,
     }
 
     for key, default_value in defaults.items():
