@@ -8,11 +8,11 @@ Home page:
 -if there's no stats yet, don't show any
 '''
 
-
-
-
+from tabs.settings import apply_settings
 
 def run_home_page():
+    apply_settings()
+    
     st.title("🏠 Home Page")
     st.write("Welcome back! Let's get organized and study smarter 📚")
 

@@ -12,8 +12,11 @@ Study Tools:
 
 
 
+from tabs.settings import apply_settings
 
 def run_study_tools():
+    apply_settings()
+
     st.title("🧠 Study Tools")
     st.write("Paste notes, generate flashcards or quizzes, and review your accuracy.")
 
