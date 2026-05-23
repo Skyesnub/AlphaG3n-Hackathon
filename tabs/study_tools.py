@@ -2,6 +2,16 @@ import streamlit as st
 import re
 import random
 
+'''
+Study Tools:
+
+
+
+'''
+
+
+
+
 
 def run_study_tools():
     st.title("🧠 Study Tools")

@@ -2,6 +2,8 @@ import streamlit as st
 
 '''
 Initializes all the states
+-work in progress
+-will add all different states from each setting/place
 '''
 
 
