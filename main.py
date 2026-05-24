@@ -9,7 +9,7 @@ from tabs.init import init_state
 
 init_state()
 
-logo = Image.open("assets/test.png")
+# logo = Image.open("assets/test.png")
 
 st.set_page_config(
     page_title="Productivity App",
