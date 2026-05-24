@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from tabs.settings import apply_settings
 import calendar
 import time
-
+import uuid
 
 def fmt_time(minutes):
     """Convert minutes to a readable string like '1h 30m' or '45m'."""
@@ -30,6 +30,19 @@ def minutes_to_time_str(mins):
 def run_planner():
     st.title("📅 Planner")
     st.write("Add assignments and view them on a calendar.")
+
+    st.markdown("""
+    <style>
+    .task-done {
+        text-decoration: line-through;
+        opacity: 0.5;
+    }
+    .task-box {
+        padding: 8px;
+        border-radius: 8px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
     # -----------------------------------------------------------------------
     # ADD TASK FORM
@@ -59,6 +72,7 @@ def run_planner():
             st.error("Minimum time is 10 minutes.")
         else:
             st.session_state.tasks.append({
+                "id": str(uuid.uuid4()),
                 "name": task_name.strip(),
                 "due_date": due_date.strftime("%Y-%m-%d"),
                 "minutes": total_minutes,
@@ -75,27 +89,24 @@ def run_planner():
     # -----------------------------------------------------------------------
     st.subheader("📋 Assignments")
 
-    if len(st.session_state.tasks) == 0:
+    if not st.session_state.tasks:
         st.info("No assignments yet. Add one above!")
     else:
         sorted_tasks = sorted(st.session_state.tasks, key=lambda x: x["due_date"])
 
-        # Split into incomplete and done
         incomplete = [t for t in sorted_tasks if t.get("status") != "Done"]
         done = [t for t in sorted_tasks if t.get("status") == "Done"]
 
-        # Only show the 5 most recent completed tasks
         done_to_show = done[-5:] if len(done) > 5 else done
         hidden_count = len(done) - len(done_to_show)
 
         all_to_show = incomplete + done_to_show
 
-        for i, task in enumerate(all_to_show):
-            if "minutes" not in task and "hours" in task:
-                task["minutes"] = int(task["hours"] * 60)
+        for task in all_to_show:
 
             is_done = task.get("status") == "Done"
             color = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(task["priority"], "⚪")
+
             due = datetime.strptime(task["due_date"], "%Y-%m-%d").date()
             days_left = (due - date.today()).days
 
@@ -110,12 +121,20 @@ def run_planner():
             else:
                 urgency = f"Due in {days_left} days"
 
-            # Strike through and gray out completed tasks using HTML in the label ----- NEVER MIND THIS DIDN't WORK :(((((
-            if is_done:
-                with st.expander(
-                    f"~~{color} {task['name']} — {task['due_date']} ({urgency})~~",
-                    expanded=False
-                ):
+            container = st.container()
+
+            with container:
+                css_class = "task-done" if is_done else ""
+
+                st.markdown(
+                    f"<div class='task-box {css_class}'>"
+                    f"{color} <b>{task['name']}</b> — {task['due_date']} ({urgency})"
+                    f"</div>",
+                    unsafe_allow_html=True
+                )
+
+                with st.expander("Details", expanded=False):
+
                     col1, col2, col3 = st.columns(3)
 
                     with col1:
@@ -125,53 +144,25 @@ def run_planner():
                         st.write(f"📌 **Priority:** {task['priority']}")
 
                     with col3:
+                        status_options = ["To Do", "In Progress", "Done"]
+
+                        current_index = status_options.index(task["status"])
+
                         new_status = st.selectbox(
                             "Status",
-                            ["To Do", "In Progress", "Done"],
-                            index=2,
-                            key=f"status_{i}_{task['name']}",
+                            status_options,
+                            index=current_index,
+                            key=f"status_{task['id']}",
                         )
 
-                        for t in st.session_state.tasks:
-                            if t["name"] == task["name"] and t["due_date"] == task["due_date"]:
-                                t["status"] = new_status
+                        if new_status != task["status"]:
+                            for t in st.session_state.tasks:
+                                if t["id"] == task["id"]:
+                                    t["status"] = new_status
+                            st.rerun()
 
-                    if st.button("🗑 Delete", key=f"delete_{i}_{task['name']}"):
-                        st.session_state.tasks = [
-                            t for t in st.session_state.tasks
-                            if not (
-                                t["name"] == task["name"]
-                                and t["due_date"] == task["due_date"]
-                            )
-                        ]
-                        st.rerun()
-            else:
-                with st.expander(f"{color} {task['name']} — {task['due_date']} ({urgency})"):
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.write(f"⏱ **Time:** {fmt_time(task['minutes'])}")
-                    with col2:
-                        st.write(f"📌 **Priority:** {task['priority']}")
-                    with col3:
-                        new_status = st.selectbox(
-                            "Status",
-                            ["To Do", "In Progress", "Done"],
-                            index=["To Do", "In Progress", "Done"].index(task.get("status", "To Do")),
-                            key=f"status_{i}_{task['name']}",
-                        )
-                        for t in st.session_state.tasks:
-                            if t["name"] == task["name"] and t["due_date"] == task["due_date"]:
-                                t["status"] = new_status
-
-                    if st.button("🗑 Delete", key=f"delete_{i}_{task['name']}"):
-                        st.session_state.tasks = [
-                            t for t in st.session_state.tasks
-                            if not (t["name"] == task["name"] and t["due_date"] == task["due_date"])
-                        ]
-                        st.rerun()
-
-        if hidden_count > 0:
-            st.caption(f"+ {hidden_count} older completed assignment(s) not shown.")
+                            if hidden_count > 0:
+                                st.caption(f"+ {hidden_count} older completed assignment(s) not shown.")
 
     st.divider()
 
