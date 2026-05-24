@@ -1,5 +1,5 @@
 import streamlit as st
-
+from PIL import Image
 from tabs.home import run_home_page
 from tabs.planner import run_planner
 from tabs.study_tools import run_study_tools
@@ -8,6 +8,8 @@ from tabs.settings import run_settings
 from tabs.init import init_state
 
 init_state()
+
+logo = Image.open("assets/test.png")
 
 st.set_page_config(
     page_title="Productivity App",
@@ -33,7 +35,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.sidebar.title("📚 Productivity App")
+st.sidebar.image("assets/actual_logo.png", use_container_width=True)
 
 page = st.sidebar.radio(
     "Go to",
