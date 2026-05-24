@@ -5,85 +5,88 @@ import streamlit as st
 # Settings-page-only theme preview.
 # These colors only affect settings.py unless you copy the system elsewhere.
 # ---------------------------------------------------------------------------
-THEME_OPTIONS = {
-    "Default": {
-        "background": "linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)",
-        "header": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        "accent": "#667eea",
-        "card": "rgba(255, 255, 255, 0.82)",
-        "border": "rgba(102, 126, 234, 0.22)",
-        "text": "#1f2937",
-        "muted": "#6b7280",
-    },
-    "Warm Peach": {
-        "background": "linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)",
-        "header": "linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%)",
-        "accent": "#f97316",
-        "card": "rgba(255, 247, 237, 0.86)",
-        "border": "rgba(249, 115, 22, 0.25)",
-        "text": "#431407",
-        "muted": "#9a3412",
-    },
-    "Mint Green": {
-        "background": "linear-gradient(135deg, #ecfdf5 0%, #bbf7d0 100%)",
-        "header": "linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%)",
-        "accent": "#059669",
-        "card": "rgba(240, 253, 244, 0.86)",
-        "border": "rgba(5, 150, 105, 0.24)",
-        "text": "#064e3b",
-        "muted": "#047857",
-    },
-    "Lavender": {
-        "background": "linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%)",
-        "header": "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%)",
-        "accent": "#7c3aed",
-        "card": "rgba(250, 245, 255, 0.86)",
-        "border": "rgba(124, 58, 237, 0.24)",
-        "text": "#3b0764",
-        "muted": "#6b21a8",
-    },
-    "Rose Pink": {
-        "background": "linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%)",
-        "header": "linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%)",
-        "accent": "#e11d48",
-        "card": "rgba(255, 241, 242, 0.86)",
-        "border": "rgba(225, 29, 72, 0.24)",
-        "text": "#4c0519",
-        "muted": "#be123c",
-    },
-    "Deep Red": {
-        "background": "linear-gradient(135deg, #fff1f2 0%, #fecaca 48%, #fca5a5 100%)",
-        "header": "linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%)",
-        "accent": "#b91c1c",
-        "card": "rgba(255, 245, 245, 0.88)",
-        "border": "rgba(185, 28, 28, 0.28)",
-        "text": "#450a0a",
-        "muted": "#991b1b",
-    },
-    "Midnight": {
-        "background": "linear-gradient(135deg, #020617 0%, #111827 45%, #1e1b4b 100%)",
-        "header": "linear-gradient(135deg, #312e81 0%, #1e3a8a 45%, #0f172a 100%)",
-        "accent": "#93c5fd",
-        "card": "rgba(15, 23, 42, 0.72)",
-        "border": "rgba(147, 197, 253, 0.22)",
-        "text": "#e5e7eb",
-        "muted": "#bfdbfe",
-    },
-}
 
 
 # ---------------------------------------------------------------------------
 # APPLY SETTINGS
-# This version only styles Settings itself.
-# It does NOT globally carry the custom header/card colors to other tabs.
+# This styles Settings AND exposes global CSS variables for pages like Home.
+# Pages can use vars like --hero-bg, --card-bg, and --accent-color.
 # ---------------------------------------------------------------------------
 def apply_settings():
+    THEME_OPTIONS = {
+        "Default": {
+            "background": "linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)",
+            "header": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "accent": "#667eea",
+            "card": "rgba(255, 255, 255, 0.82)",
+            "border": "rgba(102, 126, 234, 0.22)",
+            "text": "#1f2937",
+            "muted": "#6b7280",
+        },
+        "Warm Peach": {
+            "background": "linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)",
+            "header": "linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%)",
+            "accent": "#f97316",
+            "card": "rgba(255, 247, 237, 0.86)",
+            "border": "rgba(249, 115, 22, 0.25)",
+            "text": "#431407",
+            "muted": "#9a3412",
+        },
+        "Mint Green": {
+            "background": "linear-gradient(135deg, #ecfdf5 0%, #bbf7d0 100%)",
+            "header": "linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%)",
+            "accent": "#059669",
+            "card": "rgba(240, 253, 244, 0.86)",
+            "border": "rgba(5, 150, 105, 0.24)",
+            "text": "#064e3b",
+            "muted": "#047857",
+        },
+        "Lavender": {
+            "background": "linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%)",
+            "header": "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%)",
+            "accent": "#7c3aed",
+            "card": "rgba(250, 245, 255, 0.86)",
+            "border": "rgba(124, 58, 237, 0.24)",
+            "text": "#3b0764",
+            "muted": "#6b21a8",
+        },
+        "Rose Pink": {
+            "background": "linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%)",
+            "header": "linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%)",
+            "accent": "#e11d48",
+            "card": "rgba(255, 241, 242, 0.86)",
+            "border": "rgba(225, 29, 72, 0.24)",
+            "text": "#4c0519",
+            "muted": "#be123c",
+        },
+        "Deep Red": {
+            "background": "linear-gradient(135deg, #fff1f2 0%, #fecaca 48%, #fca5a5 100%)",
+            "header": "linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%)",
+            "accent": "#b91c1c",
+            "card": "rgba(255, 245, 245, 0.88)",
+            "border": "rgba(185, 28, 28, 0.28)",
+            "text": "#450a0a",
+            "muted": "#991b1b",
+        },
+        "Midnight": {
+            "background": "linear-gradient(135deg, #020617 0%, #111827 45%, #1e1b4b 100%)",
+            "header": "linear-gradient(135deg, #312e81 0%, #1e3a8a 45%, #0f172a 100%)",
+            "accent": "#93c5fd",
+            "card": "rgba(15, 23, 42, 0.72)",
+            "border": "rgba(147, 197, 253, 0.22)",
+            "text": "#e5e7eb",
+            "muted": "#bfdbfe",
+        },
+    }
+    
+    
     theme_name = st.session_state.get("background", "Default")
     theme = THEME_OPTIONS.get(theme_name, THEME_OPTIONS["Default"])
 
     st.markdown(f"""
         <style>
             :root {{
+                /* Settings page variables */
                 --settings-bg: {theme["background"]};
                 --settings-header: {theme["header"]};
                 --settings-accent: {theme["accent"]};
@@ -91,6 +94,15 @@ def apply_settings():
                 --settings-border: {theme["border"]};
                 --settings-text: {theme["text"]};
                 --settings-muted: {theme["muted"]};
+
+                /* Global theme variables for other pages, like home.py */
+                --app-bg: {theme["background"]};
+                --hero-bg: {theme["header"]};
+                --accent-color: {theme["accent"]};
+                --card-bg: {theme["card"]};
+                --border-color: {theme["border"]};
+                --text-color: {theme["text"]};
+                --muted-color: {theme["muted"]};
             }}
 
             #MainMenu {{ visibility: hidden; }}
@@ -198,6 +210,72 @@ def apply_settings():
 # SETTINGS PAGE
 # ---------------------------------------------------------------------------
 def run_settings():
+    THEME_OPTIONS = {
+        "Default": {
+            "background": "linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)",
+            "header": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            "accent": "#667eea",
+            "card": "rgba(255, 255, 255, 0.82)",
+            "border": "rgba(102, 126, 234, 0.22)",
+            "text": "#1f2937",
+            "muted": "#6b7280",
+        },
+        "Warm Peach": {
+            "background": "linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)",
+            "header": "linear-gradient(135deg, #fb923c 0%, #f97316 45%, #ea580c 100%)",
+            "accent": "#f97316",
+            "card": "rgba(255, 247, 237, 0.86)",
+            "border": "rgba(249, 115, 22, 0.25)",
+            "text": "#431407",
+            "muted": "#9a3412",
+        },
+        "Mint Green": {
+            "background": "linear-gradient(135deg, #ecfdf5 0%, #bbf7d0 100%)",
+            "header": "linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%)",
+            "accent": "#059669",
+            "card": "rgba(240, 253, 244, 0.86)",
+            "border": "rgba(5, 150, 105, 0.24)",
+            "text": "#064e3b",
+            "muted": "#047857",
+        },
+        "Lavender": {
+            "background": "linear-gradient(135deg, #faf5ff 0%, #e9d5ff 100%)",
+            "header": "linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%)",
+            "accent": "#7c3aed",
+            "card": "rgba(250, 245, 255, 0.86)",
+            "border": "rgba(124, 58, 237, 0.24)",
+            "text": "#3b0764",
+            "muted": "#6b21a8",
+        },
+        "Rose Pink": {
+            "background": "linear-gradient(135deg, #fff1f2 0%, #fecdd3 100%)",
+            "header": "linear-gradient(135deg, #fb7185 0%, #f43f5e 50%, #e11d48 100%)",
+            "accent": "#e11d48",
+            "card": "rgba(255, 241, 242, 0.86)",
+            "border": "rgba(225, 29, 72, 0.24)",
+            "text": "#4c0519",
+            "muted": "#be123c",
+        },
+        "Deep Red": {
+            "background": "linear-gradient(135deg, #fff1f2 0%, #fecaca 48%, #fca5a5 100%)",
+            "header": "linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%)",
+            "accent": "#b91c1c",
+            "card": "rgba(255, 245, 245, 0.88)",
+            "border": "rgba(185, 28, 28, 0.28)",
+            "text": "#450a0a",
+            "muted": "#991b1b",
+        },
+        "Midnight": {
+            "background": "linear-gradient(135deg, #020617 0%, #111827 45%, #1e1b4b 100%)",
+            "header": "linear-gradient(135deg, #312e81 0%, #1e3a8a 45%, #0f172a 100%)",
+            "accent": "#93c5fd",
+            "card": "rgba(15, 23, 42, 0.72)",
+            "border": "rgba(147, 197, 253, 0.22)",
+            "text": "#e5e7eb",
+            "muted": "#bfdbfe",
+        },
+    }    
+
     # Make sure default settings exist
     if "background" not in st.session_state:
         st.session_state.background = "Default"
@@ -229,7 +307,6 @@ def run_settings():
         st.rerun()
 
     current_theme = THEME_OPTIONS[st.session_state.background]
-    print(st.session_state.background)
 
     st.markdown(f"""
         <div class="settings-card">

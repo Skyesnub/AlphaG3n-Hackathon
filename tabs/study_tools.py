@@ -48,28 +48,37 @@ def apply_study_tools_styles():
     st.markdown(
         """
         <style>
-            /* App background */
+            /*
+            Study Tools keeps the same pretty layout,
+            but now follows colors from settings.py's apply_settings().
+
+            Needed variables from settings.py:
+            --app-bg
+            --hero-bg
+            --accent-color
+            --card-bg
+            --border-color
+            --text-color
+            --muted-color
+            */
+
             .stApp {
-                background:
-                    radial-gradient(circle at top left, rgba(129, 140, 248, 0.25), transparent 32rem),
-                    radial-gradient(circle at top right, rgba(45, 212, 191, 0.20), transparent 28rem),
-                    linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #f7fbff 100%);
+                background: var(--app-bg) !important;
+                color: var(--text-color) !important;
             }
 
-            /* Main content width + soft readable look */
             .block-container {
                 padding-top: 2rem;
                 padding-bottom: 3rem;
                 max-width: 1050px;
             }
 
-            /* Hero title card */
             .study-hero {
                 padding: 1.4rem 1.6rem;
                 border-radius: 28px;
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #06b6d4 100%);
+                background: var(--hero-bg);
                 color: white;
-                box-shadow: 0 18px 45px rgba(79, 70, 229, 0.22);
+                box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
                 margin-bottom: 1.2rem;
             }
 
@@ -77,93 +86,90 @@ def apply_study_tools_styles():
                 margin: 0;
                 font-size: 2.25rem;
                 letter-spacing: -0.04em;
+                color: white !important;
             }
 
             .study-hero p {
                 margin: 0.45rem 0 0 0;
                 font-size: 1.05rem;
                 opacity: 0.95;
+                color: rgba(255, 255, 255, 0.92) !important;
             }
 
-            /* Section headers */
             .section-title {
                 padding: 0.75rem 1rem;
                 border-radius: 18px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(99, 102, 241, 0.16);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
                 margin-top: 0.8rem;
                 margin-bottom: 0.75rem;
                 font-weight: 800;
                 font-size: 1.35rem;
-                color: #1e1b4b;
+                color: var(--accent-color);
             }
 
-            /* Make Streamlit widgets feel less default */
             div[data-testid="stTextArea"] textarea,
             div[data-testid="stTextInput"] input {
                 border-radius: 16px;
-                border: 1px solid rgba(99, 102, 241, 0.25);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+                color: var(--text-color);
             }
 
             div[data-testid="stSlider"] {
                 padding: 0.25rem 0.15rem 0.6rem 0.15rem;
             }
 
-            /* Buttons */
             div.stButton > button {
                 border-radius: 999px;
                 border: 0;
+                background: var(--hero-bg);
+                color: white !important;
                 font-weight: 700;
-                box-shadow: 0 9px 18px rgba(79, 70, 229, 0.14);
+                box-shadow: 0 9px 18px rgba(15, 23, 42, 0.14);
                 transition: transform 0.12s ease, box-shadow 0.12s ease;
             }
 
             div.stButton > button:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 12px 24px rgba(79, 70, 229, 0.20);
+                box-shadow: 0 12px 24px rgba(15, 23, 42, 0.20);
             }
 
-            /* Info/success/warning/error boxes */
             div[data-testid="stAlert"] {
                 border-radius: 18px;
-                border: 1px solid rgba(99, 102, 241, 0.13);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
             }
 
-            /* Tabs */
             button[data-baseweb="tab"] {
                 border-radius: 999px;
                 padding: 0.45rem 1rem;
                 font-weight: 700;
             }
 
-            /* Expanders */
             details {
                 border-radius: 18px !important;
-                background: rgba(255, 255, 255, 0.68) !important;
-                border: 1px solid rgba(99, 102, 241, 0.14) !important;
+                background: var(--card-bg) !important;
+                border: 1px solid var(--border-color) !important;
                 box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
             }
 
-            /* Horizontal dividers */
             hr {
                 margin: 1.7rem 0;
-                border-color: rgba(99, 102, 241, 0.18);
+                border-color: var(--border-color);
             }
 
-            /* Small stat cards */
             .stat-card {
                 padding: 1rem;
                 border-radius: 22px;
-                background: rgba(255, 255, 255, 0.74);
-                border: 1px solid rgba(99, 102, 241, 0.15);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
             }
 
             .stat-card .label {
-                color: #64748b;
+                color: var(--muted-color);
                 font-size: 0.85rem;
                 font-weight: 700;
                 text-transform: uppercase;
@@ -171,16 +177,28 @@ def apply_study_tools_styles():
             }
 
             .stat-card .value {
-                color: #1e1b4b;
+                color: var(--text-color);
                 font-size: 1.45rem;
                 font-weight: 900;
                 margin-top: 0.2rem;
+            }
+
+            .stProgress > div > div > div > div {
+                background-color: var(--accent-color) !important;
+            }
+
+            .stCaptionContainer,
+            .stCaptionContainer p {
+                color: var(--muted-color) !important;
+            }
+
+            h1, h2, h3, h4, p, label {
+                color: var(--text-color);
             }
         </style>
         """,
         unsafe_allow_html=True
     )
-
 
 def section_header(text):
     st.markdown(f'<div class="section-title">{text}</div>', unsafe_allow_html=True)

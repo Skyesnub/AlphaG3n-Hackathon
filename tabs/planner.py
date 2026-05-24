@@ -10,8 +10,23 @@ def inject_planner_styles():
     st.markdown(
         """
         <style>
+            /*
+            This Planner page keeps the same pretty layout,
+            but now follows colors from settings.py's apply_settings().
+
+            Needed variables from settings.py:
+            --app-bg
+            --hero-bg
+            --accent-color
+            --card-bg
+            --border-color
+            --text-color
+            --muted-color
+            */
+
             .stApp {
-                background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 38%, #fff7fb 100%);
+                background: var(--app-bg) !important;
+                color: var(--text-color) !important;
             }
 
             .block-container {
@@ -23,9 +38,9 @@ def inject_planner_styles():
             .planner-hero {
                 padding: 2rem 2.2rem;
                 border-radius: 28px;
-                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 52%, #06b6d4 100%);
+                background: var(--hero-bg);
                 color: white;
-                box-shadow: 0 18px 45px rgba(37, 99, 235, 0.22);
+                box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
                 margin-bottom: 1.35rem;
             }
 
@@ -33,19 +48,22 @@ def inject_planner_styles():
                 font-size: 2.55rem;
                 line-height: 1.08;
                 margin-bottom: 0.35rem;
+                color: white !important;
             }
 
             .planner-hero p {
                 font-size: 1.05rem;
                 opacity: 0.95;
                 margin-bottom: 0;
+                color: rgba(255, 255, 255, 0.92) !important;
             }
 
             .planner-tip {
                 padding: 1.05rem 1.25rem;
                 border-radius: 22px;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.9));
-                border-left: 6px solid #7c3aed;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-left: 6px solid var(--accent-color);
                 box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
                 margin: 1rem 0 1.25rem 0;
             }
@@ -53,21 +71,29 @@ def inject_planner_styles():
             .planner-tip h3 {
                 margin-top: 0;
                 margin-bottom: 0.35rem;
-                color: #3730a3;
+                color: var(--accent-color) !important;
             }
 
             .planner-tip p {
                 margin-bottom: 0;
-                color: #334155;
+                color: var(--text-color) !important;
             }
 
             .section-card {
                 padding: 1.15rem 1.25rem;
                 border-radius: 24px;
-                background: rgba(255, 255, 255, 0.72);
-                border: 1px solid rgba(124, 58, 237, 0.10);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
                 margin: 0.8rem 0 1rem 0;
+            }
+
+            .section-card h3 {
+                color: var(--accent-color) !important;
+            }
+
+            .section-card p {
+                color: var(--muted-color) !important;
             }
 
             .task-done {
@@ -78,70 +104,74 @@ def inject_planner_styles():
             .task-box {
                 padding: 0.9rem 1rem;
                 border-radius: 18px;
-                background: rgba(255, 255, 255, 0.84);
-                border: 1px solid rgba(37, 99, 235, 0.11);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
                 margin: 0.35rem 0 0.25rem 0;
-                color: #1e293b;
+                color: var(--text-color);
             }
 
             .calendar-day {
                 min-height: 4.3rem;
                 padding: 0.5rem 0.45rem;
                 border-radius: 16px;
-                background: rgba(255, 255, 255, 0.74);
-                border: 1px solid rgba(37, 99, 235, 0.10);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 6px 16px rgba(15, 23, 42, 0.045);
                 margin-bottom: 0.35rem;
-                color: #1e293b;
+                color: var(--text-color);
             }
 
             .calendar-day-active {
-                background: linear-gradient(135deg, #ffffff 0%, #eef4ff 100%);
-                border: 1px solid rgba(124, 58, 237, 0.24);
-                box-shadow: 0 10px 22px rgba(124, 58, 237, 0.10);
+                background: var(--card-bg);
+                border: 1px solid var(--accent-color);
+                box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
             }
 
             .calendar-day-muted {
                 min-height: 4.3rem;
                 padding: 0.5rem;
                 border-radius: 16px;
-                background: rgba(255, 255, 255, 0.28);
-                border: 1px dashed rgba(148, 163, 184, 0.20);
+                background: rgba(255, 255, 255, 0.18);
+                border: 1px dashed var(--border-color);
                 margin-bottom: 0.35rem;
             }
 
             .daily-block {
                 padding: 0.85rem 1rem;
                 border-radius: 18px;
-                background: rgba(255, 255, 255, 0.84);
-                border-left: 5px solid #2563eb;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-left: 5px solid var(--accent-color);
                 box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
                 margin: 0.45rem 0;
+                color: var(--text-color);
             }
 
             .daily-block-break {
                 padding: 0.75rem 1rem;
                 border-radius: 18px;
-                background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
-                border-left: 5px solid #f59e0b;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-left: 5px solid var(--muted-color);
                 box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
                 margin: 0.45rem 0;
+                color: var(--text-color);
             }
 
             .empty-state {
                 padding: 1.35rem;
                 border-radius: 22px;
-                background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
-                border: 1px dashed rgba(124, 58, 237, 0.35);
+                background: var(--card-bg);
+                border: 1px dashed var(--accent-color);
                 text-align: center;
-                box-shadow: 0 12px 28px rgba(124, 58, 237, 0.08);
-                color: #475569;
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+                color: var(--muted-color);
             }
 
             div[data-testid="stMetric"] {
-                background: rgba(255, 255, 255, 0.86);
-                border: 1px solid rgba(37, 99, 235, 0.12);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 padding: 1rem;
                 border-radius: 20px;
                 box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
@@ -149,26 +179,26 @@ def inject_planner_styles():
 
             div[data-testid="stMetricLabel"] p {
                 font-size: 0.95rem;
-                color: #475569;
+                color: var(--muted-color) !important;
             }
 
             div[data-testid="stMetricValue"] {
-                color: #1e1b4b;
+                color: var(--text-color) !important;
             }
 
             .stButton > button {
                 border-radius: 14px;
                 border: 0;
-                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
-                color: white;
+                background: var(--hero-bg);
+                color: white !important;
                 font-weight: 700;
-                box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+                box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
                 transition: 0.16s ease-in-out;
             }
 
             .stButton > button:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 14px 26px rgba(37, 99, 235, 0.23);
+                box-shadow: 0 14px 26px rgba(15, 23, 42, 0.20);
             }
 
             .stTextInput input, .stNumberInput input, textarea {
@@ -181,22 +211,30 @@ def inject_planner_styles():
 
             div[data-testid="stExpander"] {
                 border-radius: 18px;
-                border: 1px solid rgba(37, 99, 235, 0.12);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
-                background: rgba(255, 255, 255, 0.55);
+                background: var(--card-bg);
+            }
+
+            .stProgress > div > div > div > div {
+                background-color: var(--accent-color) !important;
+            }
+
+            .stCaptionContainer,
+            .stCaptionContainer p {
+                color: var(--muted-color) !important;
             }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-
 def section_card(title, body):
     st.markdown(
         f"""
         <div class="section-card">
-            <h3 style="margin-top:0; margin-bottom:0.25rem; color:#1e1b4b;">{title}</h3>
-            <p style="margin-bottom:0; color:#475569;">{body}</p>
+            <h3 style="margin-top:0; margin-bottom:0.25rem;">{title}</h3>
+            <p style="margin-bottom:0;">{body}</p>
         </div>
         """,
         unsafe_allow_html=True,

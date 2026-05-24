@@ -15,8 +15,23 @@ def inject_home_styles():
     st.markdown(
         """
         <style>
+            /*
+            This Home page stays pretty, but now it follows the colors
+            from settings.py's apply_settings().
+
+            Needed variables from settings.py:
+            --app-bg
+            --hero-bg
+            --accent-color
+            --card-bg
+            --border-color
+            --text-color
+            --muted-color
+            */
+
             .stApp {
-                background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 38%, #fff7fb 100%);
+                background: var(--app-bg) !important;
+                color: var(--text-color) !important;
             }
 
             .block-container {
@@ -28,9 +43,9 @@ def inject_home_styles():
             .home-hero {
                 padding: 2rem 2.2rem;
                 border-radius: 28px;
-                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 52%, #06b6d4 100%);
+                background: var(--hero-bg);
                 color: white;
-                box-shadow: 0 18px 45px rgba(37, 99, 235, 0.22);
+                box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
                 margin-bottom: 1.4rem;
             }
 
@@ -38,19 +53,21 @@ def inject_home_styles():
                 font-size: 2.6rem;
                 margin-bottom: 0.35rem;
                 line-height: 1.1;
+                color: white !important;
             }
 
             .home-hero p {
                 font-size: 1.05rem;
                 opacity: 0.95;
                 margin-bottom: 0;
+                color: rgba(255, 255, 255, 0.92) !important;
             }
 
             .soft-card {
                 padding: 1.2rem 1.3rem;
                 border-radius: 22px;
-                background: rgba(255, 255, 255, 0.78);
-                border: 1px solid rgba(124, 58, 237, 0.12);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
                 margin-bottom: 1rem;
             }
@@ -58,8 +75,9 @@ def inject_home_styles():
             .motivation-card {
                 padding: 1.1rem 1.3rem;
                 border-radius: 22px;
-                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.9));
-                border-left: 6px solid #7c3aed;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-left: 6px solid var(--accent-color);
                 box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
                 margin: 1rem 0 1.2rem 0;
             }
@@ -67,36 +85,36 @@ def inject_home_styles():
             .motivation-card h3 {
                 margin-top: 0;
                 margin-bottom: 0.35rem;
-                color: #3730a3;
+                color: var(--accent-color) !important;
             }
 
             .motivation-card p {
                 margin-bottom: 0;
-                color: #334155;
+                color: var(--text-color) !important;
             }
 
             .empty-state {
                 padding: 1.6rem;
                 border-radius: 24px;
-                background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
-                border: 1px dashed rgba(124, 58, 237, 0.35);
+                background: var(--card-bg);
+                border: 1px dashed var(--accent-color);
                 text-align: center;
-                box-shadow: 0 12px 28px rgba(124, 58, 237, 0.08);
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
             }
 
             .empty-state h3 {
                 margin-bottom: 0.35rem;
-                color: #4c1d95;
+                color: var(--accent-color) !important;
             }
 
             .empty-state p {
                 margin-bottom: 0;
-                color: #475569;
+                color: var(--muted-color) !important;
             }
 
             div[data-testid="stMetric"] {
-                background: rgba(255, 255, 255, 0.86);
-                border: 1px solid rgba(37, 99, 235, 0.12);
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
                 padding: 1rem;
                 border-radius: 20px;
                 box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
@@ -104,25 +122,34 @@ def inject_home_styles():
 
             div[data-testid="stMetricLabel"] p {
                 font-size: 0.95rem;
-                color: #475569;
+                color: var(--muted-color) !important;
             }
 
             div[data-testid="stMetricValue"] {
-                color: #1e1b4b;
+                color: var(--text-color) !important;
+            }
+
+            .stProgress > div > div > div > div {
+                background-color: var(--accent-color) !important;
+            }
+
+            .stCaptionContainer,
+            .stCaptionContainer p {
+                color: var(--muted-color) !important;
             }
 
             .stButton > button {
                 border-radius: 14px;
                 border: 0;
-                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
-                color: white;
+                background: var(--hero-bg);
+                color: white !important;
                 font-weight: 700;
-                box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+                box-shadow: 0 10px 20px rgba(15, 23, 42, 0.15);
             }
 
             .stButton > button:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 14px 26px rgba(37, 99, 235, 0.23);
+                box-shadow: 0 14px 26px rgba(15, 23, 42, 0.20);
             }
         </style>
         """,
@@ -134,7 +161,7 @@ def format_quiz_score(score):
     if score == "N/A":
         return "N/A"
 
-    return f"{round(1, score*100,)}%"
+    return f"{round(score*100, 1)}%"
 
 
 def run_home_page():
