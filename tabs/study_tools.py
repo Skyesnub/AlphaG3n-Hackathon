@@ -14,8 +14,6 @@ Flashcards:
     -flashcards -> list of tuples, tuple = (question, answer), dtype = string for both
     -know_flashcards -> same data structure as flashcards, cumulative
     -review_flashcards -> same data structure as flashcards, cumulative
-    -total_flashcard_scores -> list of 0/1, wrong/right (can also be cleared using separate button)
-    -cur_flashcard_scores -> list of 0/1, can be cleared by user after each flashcard session
     -flashcard_idx -> which index flashcard you are on, int
 -functions
     -toggle show or not show answer
