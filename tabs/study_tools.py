@@ -693,7 +693,7 @@ def run_study_tools():
                         st.rerun()
 
         with col2:
-            st.subheader("🔁 Review")
+            st.subheader("⭐ Review")
 
             unique_review = remove_duplicates(st.session_state.review_flashcards)
 

@@ -5,6 +5,203 @@ import calendar
 import time
 import uuid
 
+
+def inject_planner_styles():
+    st.markdown(
+        """
+        <style>
+            .stApp {
+                background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 38%, #fff7fb 100%);
+            }
+
+            .block-container {
+                padding-top: 2rem;
+                padding-bottom: 3rem;
+                max-width: 1180px;
+            }
+
+            .planner-hero {
+                padding: 2rem 2.2rem;
+                border-radius: 28px;
+                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 52%, #06b6d4 100%);
+                color: white;
+                box-shadow: 0 18px 45px rgba(37, 99, 235, 0.22);
+                margin-bottom: 1.35rem;
+            }
+
+            .planner-hero h1 {
+                font-size: 2.55rem;
+                line-height: 1.08;
+                margin-bottom: 0.35rem;
+            }
+
+            .planner-hero p {
+                font-size: 1.05rem;
+                opacity: 0.95;
+                margin-bottom: 0;
+            }
+
+            .planner-tip {
+                padding: 1.05rem 1.25rem;
+                border-radius: 22px;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(239, 246, 255, 0.9));
+                border-left: 6px solid #7c3aed;
+                box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
+                margin: 1rem 0 1.25rem 0;
+            }
+
+            .planner-tip h3 {
+                margin-top: 0;
+                margin-bottom: 0.35rem;
+                color: #3730a3;
+            }
+
+            .planner-tip p {
+                margin-bottom: 0;
+                color: #334155;
+            }
+
+            .section-card {
+                padding: 1.15rem 1.25rem;
+                border-radius: 24px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(124, 58, 237, 0.10);
+                box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+                margin: 0.8rem 0 1rem 0;
+            }
+
+            .task-done {
+                text-decoration: line-through;
+                opacity: 0.58;
+            }
+
+            .task-box {
+                padding: 0.9rem 1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.84);
+                border: 1px solid rgba(37, 99, 235, 0.11);
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+                margin: 0.35rem 0 0.25rem 0;
+                color: #1e293b;
+            }
+
+            .calendar-day {
+                min-height: 4.3rem;
+                padding: 0.5rem 0.45rem;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.74);
+                border: 1px solid rgba(37, 99, 235, 0.10);
+                box-shadow: 0 6px 16px rgba(15, 23, 42, 0.045);
+                margin-bottom: 0.35rem;
+                color: #1e293b;
+            }
+
+            .calendar-day-active {
+                background: linear-gradient(135deg, #ffffff 0%, #eef4ff 100%);
+                border: 1px solid rgba(124, 58, 237, 0.24);
+                box-shadow: 0 10px 22px rgba(124, 58, 237, 0.10);
+            }
+
+            .calendar-day-muted {
+                min-height: 4.3rem;
+                padding: 0.5rem;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.28);
+                border: 1px dashed rgba(148, 163, 184, 0.20);
+                margin-bottom: 0.35rem;
+            }
+
+            .daily-block {
+                padding: 0.85rem 1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.84);
+                border-left: 5px solid #2563eb;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+                margin: 0.45rem 0;
+            }
+
+            .daily-block-break {
+                padding: 0.75rem 1rem;
+                border-radius: 18px;
+                background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+                border-left: 5px solid #f59e0b;
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
+                margin: 0.45rem 0;
+            }
+
+            .empty-state {
+                padding: 1.35rem;
+                border-radius: 22px;
+                background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+                border: 1px dashed rgba(124, 58, 237, 0.35);
+                text-align: center;
+                box-shadow: 0 12px 28px rgba(124, 58, 237, 0.08);
+                color: #475569;
+            }
+
+            div[data-testid="stMetric"] {
+                background: rgba(255, 255, 255, 0.86);
+                border: 1px solid rgba(37, 99, 235, 0.12);
+                padding: 1rem;
+                border-radius: 20px;
+                box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
+            }
+
+            div[data-testid="stMetricLabel"] p {
+                font-size: 0.95rem;
+                color: #475569;
+            }
+
+            div[data-testid="stMetricValue"] {
+                color: #1e1b4b;
+            }
+
+            .stButton > button {
+                border-radius: 14px;
+                border: 0;
+                background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+                color: white;
+                font-weight: 700;
+                box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+                transition: 0.16s ease-in-out;
+            }
+
+            .stButton > button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 26px rgba(37, 99, 235, 0.23);
+            }
+
+            .stTextInput input, .stNumberInput input, textarea {
+                border-radius: 14px;
+            }
+
+            div[data-baseweb="select"] > div {
+                border-radius: 14px;
+            }
+
+            div[data-testid="stExpander"] {
+                border-radius: 18px;
+                border: 1px solid rgba(37, 99, 235, 0.12);
+                box-shadow: 0 8px 20px rgba(15, 23, 42, 0.045);
+                background: rgba(255, 255, 255, 0.55);
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_card(title, body):
+    st.markdown(
+        f"""
+        <div class="section-card">
+            <h3 style="margin-top:0; margin-bottom:0.25rem; color:#1e1b4b;">{title}</h3>
+            <p style="margin-bottom:0; color:#475569;">{body}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 def fmt_time(minutes):
     """Convert minutes to a readable string like '1h 30m' or '45m'."""
     minutes = round(minutes)
@@ -28,26 +225,33 @@ def minutes_to_time_str(mins):
 
 
 def run_planner():
-    st.title("📅 Planner")
-    st.write("Add assignments and view them on a calendar.")
+    apply_settings()
+    inject_planner_styles()
 
-    st.markdown("""
-    <style>
-    .task-done {
-        text-decoration: line-through;
-        opacity: 0.5;
-    }
-    .task-box {
-        padding: 8px;
-        border-radius: 8px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="planner-hero">
+            <h1>📅 Planner</h1>
+            <p>Add assignments, map out due dates, and turn your workload into a study plan that actually feels doable ✨</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        """
+        <div class="planner-tip">
+            <h3>🌟 Tiny planning win</h3>
+            <p>Break big assignments into time chunks. Your schedule works better when your brain is not being jump-scared by giant tasks.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # -----------------------------------------------------------------------
     # ADD TASK FORM
     # -----------------------------------------------------------------------
-    st.subheader("➕ Add Assignment")
+    section_card("➕ Add Assignment", "Add the assignment, deadline, estimated time, and priority.")
 
     task_name = st.text_input("Assignment Name", placeholder="e.g. Math Homework")
 
@@ -87,10 +291,18 @@ def run_planner():
     # -----------------------------------------------------------------------
     # TASK LIST
     # -----------------------------------------------------------------------
-    st.subheader("📋 Assignments")
+    section_card("📋 Assignments", "See what is coming up, what is done, and what needs your attention next.")
 
     if not st.session_state.tasks:
-        st.info("No assignments yet. Add one above!")
+        st.markdown(
+            """
+            <div class="empty-state">
+                <b>📝 No assignments yet.</b><br>
+                Add one above and your planner will start building the dashboard.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     else:
         sorted_tasks = sorted(st.session_state.tasks, key=lambda x: x["due_date"])
 
@@ -169,7 +381,7 @@ def run_planner():
     # -----------------------------------------------------------------------
     # CALENDAR VIEW — due dates
     # -----------------------------------------------------------------------
-    st.subheader("🗓 Due Date Calendar")
+    section_card("🗓 Due Date Calendar", "A quick month view of deadlines, with priority colors at a glance.")
 
     today = date.today()
     selected_month = st.selectbox(
@@ -196,23 +408,25 @@ def run_planner():
         cols = st.columns(7)
         for col, day in zip(cols, week):
             if day == 0:
-                col.write("")
+                col.markdown("<div class='calendar-day-muted'></div>", unsafe_allow_html=True)
             elif day in tasks_by_day:
                 icons = " ".join(
                     {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(t["priority"], "⚪")
                     for t in tasks_by_day[day]
                 )
-                col.markdown(f"**{day}**  \n{icons}")
+                col.markdown(
+                    f"<div class='calendar-day calendar-day-active'><b>{day}</b><br>{icons}</div>",
+                    unsafe_allow_html=True,
+                )
             else:
-                col.write(str(day))
+                col.markdown(f"<div class='calendar-day'><b>{day}</b></div>", unsafe_allow_html=True)
 
     st.divider()
 
     # -----------------------------------------------------------------------
     # AVAILABILITY INPUT
     # -----------------------------------------------------------------------
-    st.subheader("⏰ Your Daily Availability")
-    st.write("Set the time window you're free to study each day.")
+    section_card("⏰ Your Daily Availability", "Set the time window you are free to study each day.")
 
     if "availability" not in st.session_state:
         st.session_state.availability = {
@@ -258,10 +472,18 @@ def run_planner():
     # -----------------------------------------------------------------------
     # STUDY SCHEDULE GENERATOR
     # -----------------------------------------------------------------------
-    st.subheader("📆 Generated Study Schedule")
+    section_card("📆 Generated Study Schedule", "Your planner splits assignment time into available study windows before each due date.")
 
     if len(st.session_state.tasks) == 0:
-        st.info("Add assignments above to generate a schedule.")
+        st.markdown(
+            """
+            <div class="empty-state">
+                <b>📆 Nothing to schedule yet.</b><br>
+                Add assignments first, then your study blocks will show up here.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
     else:
         priority_order = {"High": 0, "Medium": 1, "Low": 2}
         tasks_to_schedule = [
@@ -374,7 +596,7 @@ def run_planner():
             cols = st.columns(7)
             for col, day in zip(cols, week):
                 if day == 0:
-                    col.write("")
+                    col.markdown("<div class='calendar-day-muted'></div>", unsafe_allow_html=True)
                 elif day in sched_by_day:
                     blocks = sched_by_day[day]
                     task_blocks = [b for b in blocks if not b["is_break"]]
@@ -383,14 +605,25 @@ def run_planner():
                         {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(b["priority"], "⚪")
                         for b in task_blocks
                     )
-                    col.markdown(f"**{day}**  \n{icons}  \n_{fmt_time(total_mins)}_")
+                    col.markdown(
+                        f"<div class='calendar-day calendar-day-active'><b>{day}</b><br>{icons}<br><em>{fmt_time(total_mins)}</em></div>",
+                        unsafe_allow_html=True,
+                    )
                 else:
-                    col.write(str(day))
+                    col.markdown(f"<div class='calendar-day'><b>{day}</b></div>", unsafe_allow_html=True)
 
         st.write("#### 📝 Daily Schedule")
         sorted_days = sorted(sched_by_day.items())
         if not sorted_days:
-            st.info("No study sessions scheduled this month.")
+            st.markdown(
+                """
+                <div class="empty-state">
+                    <b>🌙 No study sessions scheduled this month.</b><br>
+                    Try adding more availability or checking assignments due in this month.
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
         else:
             for day_num, blocks in sorted_days:
                 d = date(sched_year, sched_month_num, day_num)
@@ -400,10 +633,16 @@ def run_planner():
                     end_str = minutes_to_time_str(block["end_min"])
                     duration = block["end_min"] - block["start_min"]
                     if block["is_break"]:
-                        st.write(f"  ☕ Break — {start_str} to {end_str}")
+                        st.markdown(
+                            f"<div class='daily-block-break'>☕ <b>Break</b> — {start_str} to {end_str}</div>",
+                            unsafe_allow_html=True,
+                        )
                     else:
                         color = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(block["priority"], "⚪")
-                        st.write(f"  {color} {block['name']} — {start_str} to {end_str} ({fmt_time(duration)})")
+                        st.markdown(
+                            f"<div class='daily-block'>{color} <b>{block['name']}</b> — {start_str} to {end_str} ({fmt_time(duration)})</div>",
+                            unsafe_allow_html=True,
+                        )
 
     st.divider()
 
@@ -413,7 +652,7 @@ def run_planner():
     # session_state so it survives Streamlit reruns. When you hit Stop,
     # elapsed time is calculated and saved to study_sessions for progress.py.
     # -----------------------------------------------------------------------
-    st.subheader("⏱ Study Timer")
+    section_card("⏱ Study Timer", "Start a focused study session and save the time into your progress log.")
 
     # Ensure timer state keys exist
     if "timer_running" not in st.session_state:
@@ -508,7 +747,10 @@ def run_planner():
             idx = len(st.session_state.study_sessions) - 1 - i  # real index for deletion
             col1, col2 = st.columns([4, 1])
             with col1:
-                st.write(f"📖 **{session['subject']}** — {fmt_time(session['minutes'])} on {session['date']}")
+                st.markdown(
+                    f"<div class='daily-block'>📖 <b>{session['subject']}</b> — {fmt_time(session['minutes'])} on {session['date']}</div>",
+                    unsafe_allow_html=True,
+                )
             with col2:
                 if st.button("🗑", key=f"del_session_{idx}"):
                     st.session_state.study_sessions.pop(idx)

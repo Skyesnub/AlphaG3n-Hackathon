@@ -22,9 +22,180 @@ if "total_quiz_scores" not in st.session_state:
 if "cur_quiz_scores" not in st.session_state:
     st.session_state.cur_quiz_scores = []
 
+
+def apply_progress_styles():
+    st.markdown(
+        """
+        <style>
+            /* App background - same vibe as Study Tools */
+            .stApp {
+                background:
+                    radial-gradient(circle at top left, rgba(129, 140, 248, 0.25), transparent 32rem),
+                    radial-gradient(circle at top right, rgba(45, 212, 191, 0.20), transparent 28rem),
+                    linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #f7fbff 100%);
+            }
+
+            .block-container {
+                padding-top: 2rem;
+                padding-bottom: 3rem;
+                max-width: 1050px;
+            }
+
+            .study-hero {
+                padding: 1.4rem 1.6rem;
+                border-radius: 28px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #06b6d4 100%);
+                color: white;
+                box-shadow: 0 18px 45px rgba(79, 70, 229, 0.22);
+                margin-bottom: 1.2rem;
+            }
+
+            .study-hero h1 {
+                margin: 0;
+                font-size: 2.25rem;
+                letter-spacing: -0.04em;
+            }
+
+            .study-hero p {
+                margin: 0.45rem 0 0 0;
+                font-size: 1.05rem;
+                opacity: 0.95;
+            }
+
+            .section-title {
+                padding: 0.75rem 1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(99, 102, 241, 0.16);
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+                margin-top: 1rem;
+                margin-bottom: 0.75rem;
+                font-weight: 800;
+                font-size: 1.35rem;
+                color: #1e1b4b;
+            }
+
+            .stat-card {
+                padding: 1rem;
+                border-radius: 22px;
+                background: rgba(255, 255, 255, 0.74);
+                border: 1px solid rgba(99, 102, 241, 0.15);
+                box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+                min-height: 108px;
+            }
+
+            .stat-card .label {
+                color: #64748b;
+                font-size: 0.82rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .stat-card .value {
+                color: #1e1b4b;
+                font-size: 1.55rem;
+                font-weight: 900;
+                margin-top: 0.3rem;
+            }
+
+            .mini-card {
+                padding: 0.9rem 1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.68);
+                border: 1px solid rgba(99, 102, 241, 0.13);
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+                margin-bottom: 0.45rem;
+            }
+
+            .mini-card b {
+                color: #1e1b4b;
+            }
+
+            .subtle-text {
+                color: #64748b;
+                font-size: 0.95rem;
+            }
+
+            /* Buttons */
+            div.stButton > button {
+                border-radius: 999px;
+                border: 0;
+                font-weight: 700;
+                box-shadow: 0 9px 18px rgba(79, 70, 229, 0.14);
+                transition: transform 0.12s ease, box-shadow 0.12s ease;
+            }
+
+            div.stButton > button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 24px rgba(79, 70, 229, 0.20);
+            }
+
+            div[data-testid="stAlert"] {
+                border-radius: 18px;
+                border: 1px solid rgba(99, 102, 241, 0.13);
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+            }
+
+            details {
+                border-radius: 18px !important;
+                background: rgba(255, 255, 255, 0.68) !important;
+                border: 1px solid rgba(99, 102, 241, 0.14) !important;
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+            }
+
+            /* Keep dividers subtle if any appear elsewhere */
+            hr {
+                margin: 1.4rem 0;
+                border-color: rgba(99, 102, 241, 0.18);
+            }
+
+            div[data-testid="stMetric"] {
+                background: rgba(255, 255, 255, 0.70);
+                border: 1px solid rgba(99, 102, 241, 0.13);
+                border-radius: 20px;
+                padding: 0.75rem 0.9rem;
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+            }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_header(text):
+    st.markdown(f'<div class="section-title">{text}</div>', unsafe_allow_html=True)
+
+
+def stat_card(label, value):
+    st.markdown(
+        f"""
+        <div class="stat-card">
+            <div class="label">{label}</div>
+            <div class="value">{value}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def mini_card(content):
+    st.markdown(f'<div class="mini-card">{content}</div>', unsafe_allow_html=True)
+
+
 def run_progress():
-    st.title("📊 Progress")
-    st.write("Track your workload and study habits.")
+    apply_settings()
+    apply_progress_styles()
+
+    st.markdown(
+        """
+        <div class="study-hero">
+            <h1>📊 Progress</h1>
+            <p>Track your workload and study habits.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # Make sure all needed keys exist
     if "tasks" not in st.session_state:
@@ -38,7 +209,7 @@ def run_progress():
     # SECTION 1 — HOMEWORK REMAINING
     # Adds up minutes for all tasks that aren't marked Done.
     # -----------------------------------------------------------------------
-    st.subheader("📚 Homework Remaining")
+    section_header("📚 Homework Remaining")
 
     incomplete_tasks = [t for t in st.session_state.tasks if t.get("status") != "Done"]
 
@@ -54,28 +225,27 @@ def run_progress():
                 total_mins += int(t["hours"] * 60)
 
         hours, mins = divmod(total_mins, 60)
+        done_count = len([t for t in st.session_state.tasks if t.get("status") == "Done"])
+        total_count = len(st.session_state.tasks)
+        pct = int((done_count / total_count) * 100) if total_count > 0 else 0
+
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Incomplete Assignments", len(incomplete_tasks))
+            stat_card("Incomplete Assignments", len(incomplete_tasks))
         with col2:
-            st.metric("Total Time Remaining", f"{hours}h {mins}m" if hours > 0 else f"{mins}m")
+            stat_card("Total Time Remaining", f"{hours}h {mins}m" if hours > 0 else f"{mins}m")
         with col3:
-            done_count = len([t for t in st.session_state.tasks if t.get("status") == "Done"])
-            total_count = len(st.session_state.tasks)
-            pct = int((done_count / total_count) * 100) if total_count > 0 else 0
-            st.metric("Completion Rate", f"{pct}%")
+            stat_card("Completion Rate", f"{pct}%")
 
         # Progress bar showing how much is done
         if total_count > 0:
             st.progress(pct / 100, text=f"{done_count} of {total_count} assignments complete")
 
-    st.divider()
-
     # -----------------------------------------------------------------------
     # SECTION 2 — UPCOMING DUE DATES
     # Finds the next day that has assignments due and shows them.
     # -----------------------------------------------------------------------
-    st.subheader("📅 Upcoming Due Dates")
+    section_header("📅 Upcoming Due Dates")
 
     if not st.session_state.tasks:
         st.info("No assignments added yet.")
@@ -98,7 +268,7 @@ def run_progress():
             for task in overdue:
                 color = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(task["priority"], "⚪")
                 days_ago = (today - datetime.strptime(task["due_date"], "%Y-%m-%d").date()).days
-                st.write(f"  {color} **{task['name']}** — was due {days_ago} day(s) ago")
+                mini_card(f"{color} <b>{task['name']}</b> — was due {days_ago} day(s) ago")
 
         # Show the next upcoming due date and all tasks on that day
         if upcoming:
@@ -125,7 +295,7 @@ def run_progress():
                     mins = 0
                 h, m = divmod(mins, 60)
                 time_str = f"{h}h {m}m" if h > 0 else f"{m}m"
-                st.write(f"  {color} **{task['name']}** — {time_str} remaining · {task['priority']} priority")
+                mini_card(f"{color} <b>{task['name']}</b> — {time_str} remaining · {task['priority']} priority")
 
             # Also show any other upcoming due dates after that
             future_dates = sorted([d for d in upcoming if d > next_due_date])
@@ -135,12 +305,10 @@ def run_progress():
                         st.markdown(f"**{d.strftime('%A, %B %d')}**")
                         for task in upcoming[d]:
                             color = {"Low": "🟢", "Medium": "🟡", "High": "🔴"}.get(task["priority"], "⚪")
-                            st.write(f"  {color} {task['name']} · {task['priority']} priority")
+                            mini_card(f"{color} {task['name']} · {task['priority']} priority")
         else:
             if not overdue:
                 st.success("No upcoming assignments!")
-
-    st.divider()
 
     # -----------------------------------------------------------------------
     # SECTION 3 — TIME STUDIED PER SUBJECT
@@ -149,7 +317,7 @@ def run_progress():
     # Each session is expected to be:
     #   {"subject": str, "minutes": int, "date": "YYYY-MM-DD"}
     # -----------------------------------------------------------------------
-    st.subheader("⏱ Time Studied Per Subject")
+    section_header("⏱ Time Studied Per Subject")
 
     if not st.session_state.study_sessions:
         st.info("No study sessions recorded yet. Start a study session from the Planner to track time here.")
@@ -190,12 +358,14 @@ def run_progress():
             sizes = [total_studied, remaining_minutes]
 
             fig, ax = plt.subplots(figsize=(2, 2))
+            fig.patch.set_alpha(0)
+            ax.set_facecolor("none")
 
             ax.pie(
                 sizes,
                 labels=labels,
                 autopct="%1.1f%%",
-                startangle=90
+                startangle=90,
             )
 
             ax.axis("equal")
@@ -209,60 +379,55 @@ def run_progress():
             )
 
         total_h, total_m = divmod(total_studied, 60)
-        st.metric("Total Study Time", f"{total_h}h {total_m}m" if total_h > 0 else f"{total_m}m")
+        stat_card("Total Study Time", f"{total_h}h {total_m}m" if total_h > 0 else f"{total_m}m")
 
         st.write("**By subject:**")
         for subject, mins in sorted_subjects:
             h, m = divmod(mins, 60)
             time_str = f"{h}h {m}m" if h > 0 else f"{m}m"
             pct = int((mins / total_studied) * 100) if total_studied > 0 else 0
-            st.write(f"**{subject}** — {time_str}")
+            mini_card(f"<b>{subject}</b> — {time_str}")
             st.progress(pct / 100, text=f"{pct}% of total study time")
 
-        st.divider()
+    section_header("🧠 Study Tools Performance")
 
-        st.subheader("🧠 Study Tools Performance")
+    # -----------------------------
+    # QUIZ ACCURACY
+    # -----------------------------
+    total_scores = st.session_state.total_quiz_scores
+    cur_scores = st.session_state.cur_quiz_scores
 
-        # -----------------------------
-        # QUIZ ACCURACY
-        # -----------------------------
-        total_scores = st.session_state.total_quiz_scores
-        cur_scores = st.session_state.cur_quiz_scores
+    total_acc = (sum(total_scores) / len(total_scores) * 100) if total_scores else None
+    cur_acc = (sum(cur_scores) / len(cur_scores) * 100) if cur_scores else None
 
-        total_acc = (sum(total_scores) / len(total_scores) * 100) if total_scores else None
-        cur_acc = (sum(cur_scores) / len(cur_scores) * 100) if cur_scores else None
+    col1, col2 = st.columns(2)
 
-        col1, col2 = st.columns(2)
+    with col1:
+        stat_card("Quiz Accuracy (Current)", f"{cur_acc:.1f}%" if cur_acc is not None else "N/A")
 
+    with col2:
+        stat_card("Quiz Accuracy (Total)", f"{total_acc:.1f}%" if total_acc is not None else "N/A")
+
+    know = len(st.session_state.know_flashcards)
+    review = len(st.session_state.review_flashcards)
+    total_cards = len(st.session_state.flashcards)
+
+    if total_cards > 0:
+        st.write("### Flashcard Mastery")
+
+        mastery_pct = (know / total_cards) * 100
+
+        stat_card("Mastery Rate", f"{mastery_pct:.1f}%")
+        st.progress(mastery_pct / 100)
+
+        col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric(
-                "Quiz Accuracy (Current)",
-                f"{cur_acc:.1f}%" if cur_acc is not None else "N/A"
-            )
-
+            stat_card("Known", know)
         with col2:
-            st.metric(
-                "Quiz Accuracy (Total)",
-                f"{total_acc:.1f}%" if total_acc is not None else "N/A"
-            )
-
-        know = len(st.session_state.know_flashcards)
-        review = len(st.session_state.review_flashcards)
-        total_cards = len(st.session_state.flashcards)
-
-        if total_cards > 0:
-            st.write("### Flashcard Mastery")
-
-            mastery_pct = (know / total_cards) * 100
-
-            st.metric("Mastery Rate", f"{mastery_pct:.1f}%")
-            st.progress(mastery_pct / 100)
-
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Known", know)
-            col2.metric("Review", review)
-            col3.metric("Total Cards", total_cards)
-        else:
-            st.info("No flashcards generated yet.")
+            stat_card("Review", review)
+        with col3:
+            stat_card("Total Cards", total_cards)
+    else:
+        st.info("No flashcards generated yet.")
 
     apply_settings()

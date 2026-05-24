@@ -134,7 +134,7 @@ def format_quiz_score(score):
     if score == "N/A":
         return "N/A"
 
-    return f"{round(score, 1)}%"
+    return f"{round(1, score*100,)}%"
 
 
 def run_home_page():
@@ -168,8 +168,8 @@ def run_home_page():
     if "study_sessions" not in st.session_state:
         st.session_state.study_sessions = []
 
-    if "quiz_scores" not in st.session_state:
-        st.session_state.quiz_scores = []
+    if "total_quiz_scores" not in st.session_state:
+        st.session_state.total_quiz_scores = []
 
     '''
     QUICK SUMMARY:
@@ -190,8 +190,8 @@ def run_home_page():
 
     # compute average quiz score
     average_quiz_score = 0
-    if len(st.session_state.quiz_scores) > 0:
-        average_quiz_score = sum(st.session_state.quiz_scores) / len(st.session_state.quiz_scores)
+    if len(st.session_state.total_quiz_scores) > 0:
+        average_quiz_score = sum(st.session_state.total_quiz_scores) / len(st.session_state.total_quiz_scores)
     else:
         average_quiz_score = "N/A"
 
