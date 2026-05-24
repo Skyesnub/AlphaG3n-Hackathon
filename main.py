@@ -12,9 +12,26 @@ init_state()
 st.set_page_config(
     page_title="Productivity App",
     page_icon="📚",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
+# Hide sidebar collapse button
+st.markdown("""
+<style>
+
+/* Hide collapse button */
+[data-testid="stSidebarCollapseButton"] {
+    display: none;
+}
+
+/* Optional: cleaner top spacing */
+[data-testid="stSidebarContent"] {
+    padding-top: 1rem;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 st.sidebar.title("📚 Productivity App")
 
@@ -28,7 +45,6 @@ page = st.sidebar.radio(
         "Settings",
     ]
 )
-
 
 if page == "Home Page":
     run_home_page()
