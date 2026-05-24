@@ -76,6 +76,7 @@ def run_study_tools():
         "new_quiz_answer": "",
     }
 
+
     for key, value in defaults.items():
         if key not in st.session_state:
             st.session_state[key] = value
@@ -490,6 +491,8 @@ def run_study_tools():
                 st.rerun()
             else:
                 st.warning("Add both a question and an answer.")
+
+
 
     # -----------------------------
     # Know / Review flashcards

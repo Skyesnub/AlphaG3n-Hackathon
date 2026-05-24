@@ -4,6 +4,24 @@ from tabs.settings import apply_settings
 import pandas as pd
 import matplotlib.pyplot as plt
 
+if "flashcards" not in st.session_state:
+    st.session_state.flashcards = []
+
+if "know_flashcards" not in st.session_state:
+    st.session_state.know_flashcards = []
+
+if "review_flashcards" not in st.session_state:
+    st.session_state.review_flashcards = []
+
+if "quizzes" not in st.session_state:
+    st.session_state.quizzes = []
+
+if "total_quiz_scores" not in st.session_state:
+    st.session_state.total_quiz_scores = []
+
+if "cur_quiz_scores" not in st.session_state:
+    st.session_state.cur_quiz_scores = []
+
 def run_progress():
     st.title("📊 Progress")
     st.write("Track your workload and study habits.")
@@ -200,5 +218,51 @@ def run_progress():
             pct = int((mins / total_studied) * 100) if total_studied > 0 else 0
             st.write(f"**{subject}** — {time_str}")
             st.progress(pct / 100, text=f"{pct}% of total study time")
+
+        st.divider()
+
+        st.subheader("🧠 Study Tools Performance")
+
+        # -----------------------------
+        # QUIZ ACCURACY
+        # -----------------------------
+        total_scores = st.session_state.total_quiz_scores
+        cur_scores = st.session_state.cur_quiz_scores
+
+        total_acc = (sum(total_scores) / len(total_scores) * 100) if total_scores else None
+        cur_acc = (sum(cur_scores) / len(cur_scores) * 100) if cur_scores else None
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "Quiz Accuracy (Current)",
+                f"{cur_acc:.1f}%" if cur_acc is not None else "N/A"
+            )
+
+        with col2:
+            st.metric(
+                "Quiz Accuracy (Total)",
+                f"{total_acc:.1f}%" if total_acc is not None else "N/A"
+            )
+
+        know = len(st.session_state.know_flashcards)
+        review = len(st.session_state.review_flashcards)
+        total_cards = len(st.session_state.flashcards)
+
+        if total_cards > 0:
+            st.write("### Flashcard Mastery")
+
+            mastery_pct = (know / total_cards) * 100
+
+            st.metric("Mastery Rate", f"{mastery_pct:.1f}%")
+            st.progress(mastery_pct / 100)
+
+            col1, col2, col3 = st.columns(3)
+            col1.metric("Known", know)
+            col2.metric("Review", review)
+            col3.metric("Total Cards", total_cards)
+        else:
+            st.info("No flashcards generated yet.")
 
     apply_settings()
