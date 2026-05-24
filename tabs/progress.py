@@ -221,6 +221,21 @@ def run_progress():
     apply_settings()
     apply_progress_styles()
 
+    # Ensure all required session state keys exist
+    defaults = {
+        "flashcards": [],
+        "know_flashcards": [],
+        "review_flashcards": [],
+        "quizzes": [],
+        "total_quiz_scores": [],
+        "cur_quiz_scores": [],
+        "tasks": [],
+        "study_sessions": [],
+    }
+    for key, default in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = default
+
     st.markdown(
         """
         <div class="study-hero">
