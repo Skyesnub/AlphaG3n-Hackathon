@@ -44,11 +44,173 @@ Review:
 '''
 
 
+def apply_study_tools_styles():
+    st.markdown(
+        """
+        <style>
+            /* App background */
+            .stApp {
+                background:
+                    radial-gradient(circle at top left, rgba(129, 140, 248, 0.25), transparent 32rem),
+                    radial-gradient(circle at top right, rgba(45, 212, 191, 0.20), transparent 28rem),
+                    linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #f7fbff 100%);
+            }
+
+            /* Main content width + soft readable look */
+            .block-container {
+                padding-top: 2rem;
+                padding-bottom: 3rem;
+                max-width: 1050px;
+            }
+
+            /* Hero title card */
+            .study-hero {
+                padding: 1.4rem 1.6rem;
+                border-radius: 28px;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 45%, #06b6d4 100%);
+                color: white;
+                box-shadow: 0 18px 45px rgba(79, 70, 229, 0.22);
+                margin-bottom: 1.2rem;
+            }
+
+            .study-hero h1 {
+                margin: 0;
+                font-size: 2.25rem;
+                letter-spacing: -0.04em;
+            }
+
+            .study-hero p {
+                margin: 0.45rem 0 0 0;
+                font-size: 1.05rem;
+                opacity: 0.95;
+            }
+
+            /* Section headers */
+            .section-title {
+                padding: 0.75rem 1rem;
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.72);
+                border: 1px solid rgba(99, 102, 241, 0.16);
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+                margin-top: 0.8rem;
+                margin-bottom: 0.75rem;
+                font-weight: 800;
+                font-size: 1.35rem;
+                color: #1e1b4b;
+            }
+
+            /* Make Streamlit widgets feel less default */
+            div[data-testid="stTextArea"] textarea,
+            div[data-testid="stTextInput"] input {
+                border-radius: 16px;
+                border: 1px solid rgba(99, 102, 241, 0.25);
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+            }
+
+            div[data-testid="stSlider"] {
+                padding: 0.25rem 0.15rem 0.6rem 0.15rem;
+            }
+
+            /* Buttons */
+            div.stButton > button {
+                border-radius: 999px;
+                border: 0;
+                font-weight: 700;
+                box-shadow: 0 9px 18px rgba(79, 70, 229, 0.14);
+                transition: transform 0.12s ease, box-shadow 0.12s ease;
+            }
+
+            div.stButton > button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 24px rgba(79, 70, 229, 0.20);
+            }
+
+            /* Info/success/warning/error boxes */
+            div[data-testid="stAlert"] {
+                border-radius: 18px;
+                border: 1px solid rgba(99, 102, 241, 0.13);
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+            }
+
+            /* Tabs */
+            button[data-baseweb="tab"] {
+                border-radius: 999px;
+                padding: 0.45rem 1rem;
+                font-weight: 700;
+            }
+
+            /* Expanders */
+            details {
+                border-radius: 18px !important;
+                background: rgba(255, 255, 255, 0.68) !important;
+                border: 1px solid rgba(99, 102, 241, 0.14) !important;
+                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+            }
+
+            /* Horizontal dividers */
+            hr {
+                margin: 1.7rem 0;
+                border-color: rgba(99, 102, 241, 0.18);
+            }
+
+            /* Small stat cards */
+            .stat-card {
+                padding: 1rem;
+                border-radius: 22px;
+                background: rgba(255, 255, 255, 0.74);
+                border: 1px solid rgba(99, 102, 241, 0.15);
+                box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+            }
+
+            .stat-card .label {
+                color: #64748b;
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .stat-card .value {
+                color: #1e1b4b;
+                font-size: 1.45rem;
+                font-weight: 900;
+                margin-top: 0.2rem;
+            }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+def section_header(text):
+    st.markdown(f'<div class="section-title">{text}</div>', unsafe_allow_html=True)
+
+
+def stat_card(label, value):
+    st.markdown(
+        f"""
+        <div class="stat-card">
+            <div class="label">{label}</div>
+            <div class="value">{value}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
 def run_study_tools():
     apply_settings()
-    
-    st.title("🧠 Study Tools")
-    st.write("Paste notes, generate flashcards/quizzes, and track what you know.")
+    apply_study_tools_styles()
+
+    st.markdown(
+        '''
+        <div class="study-hero">
+            <h1>🧠 Study Tools</h1>
+            <p>Paste notes, generate flashcards/quizzes, and track what you know.</p>
+        </div>
+        ''',
+        unsafe_allow_html=True
+    )
 
     #initialization
     defaults = {
@@ -190,7 +352,7 @@ def run_study_tools():
     ##################################################
     '''*************** INPUTS ******************'''
     ##################################################
-    st.subheader("📥 Paste Notes")
+    section_header("📥 Paste Notes")
 
     notes = st.text_area(
         "Copy-paste your notes here:",
@@ -208,13 +370,21 @@ def run_study_tools():
     if notes.strip():
         st.caption(f"Detected {len(extracted_pairs)} possible study items from your notes.")
 
+    stat_col1, stat_col2, stat_col3 = st.columns(3)
+    with stat_col1:
+        stat_card("Detected items", len(extracted_pairs))
+    with stat_col2:
+        stat_card("Flashcards saved", len(st.session_state.flashcards))
+    with stat_col3:
+        stat_card("Quiz questions saved", len(st.session_state.quizzes))
+
     st.divider()
 
     ##################################################
     '''*************** FLASHCARDS ******************'''
     ##################################################
     
-    st.subheader("🃏 Flashcards")
+    section_header("🃏 Flashcards")
 
     flashcard_amount = st.slider(
         "How many flashcards do you want?",
@@ -314,7 +484,7 @@ def run_study_tools():
     '''*************** QUIZZES ******************'''
     ##################################################
     
-    st.subheader("📝 Quizzes")
+    section_header("📝 Quizzes")
 
     quiz_amount = st.slider(
         "How many quiz questions do you want?",
@@ -442,7 +612,7 @@ def run_study_tools():
     ##################################################
     '''*************** REVIEW ******************'''
     ##################################################
-    st.subheader("📚 Review All Generated Items")
+    section_header("📚 Review All Generated Items")
 
     tab1, tab2, tab3 = st.tabs(["All Flashcards", "Know / Review", "All Quiz Questions"])
 
