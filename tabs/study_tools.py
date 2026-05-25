@@ -2,6 +2,8 @@ import streamlit as st
 import re
 import random
 from tabs.settings import apply_settings
+from tabs.extract import extract_pairs_from_notes
+import math
 '''
 Study Tools
 
@@ -262,56 +264,6 @@ def run_study_tools():
     ##################################################
     '''*************** HELPER FUNCTIONS ******************'''
     ##################################################
-    def extract_pairs_from_notes(text):
-        """
-        Looks for patterns like:
-        - term is definition.
-        - term: definition
-        - term = definition
-        - term - definition
-
-        Stops sections at periods or new lines.
-        Returns list of tuples: (question, answer)
-        """
-        pairs = []
-
-        # Stop sections at period or newline
-        chunks = re.split(r"[.\n]+", text)
-
-        patterns = [
-            r"^(.+?)\s+is\s+(.+)$",
-            r"^(.+?)\s+are\s+(.+)$",
-            r"^(.+?)\s*:\s*(.+)$",
-            r"^(.+?)\s*=\s*(.+)$",
-            r"^(.+?)\s*-\s*(.+)$",
-            r"^(.+?)\s+means\s+(.+)$",
-            r"^(.+?)\s+refers to\s+(.+)$",
-            r"^(.+?)\s+is defined as\s+(.+)$",
-        ]
-
-        for chunk in chunks:
-            chunk = chunk.strip()
-            chunk = re.sub(r"\s+", " ", chunk)
-
-            if len(chunk) < 5:
-                continue
-
-            for pattern in patterns:
-                match = re.match(pattern, chunk, re.IGNORECASE)
-
-                if match:
-                    term = match.group(1).strip()
-                    definition = match.group(2).strip()
-
-                    # Avoid terrible flashcards like giant paragraphs as terms
-                    if len(term) > 1 and len(definition) > 1 and len(term.split()) <= 12:
-                        question = term
-                        answer = definition
-                        pairs.append((question, answer))
-
-                    break
-
-        return pairs
 
     def repeat_to_amount(items, amount):
         """
@@ -383,8 +335,22 @@ def run_study_tools():
         )
     )
 
-    extracted_pairs = extract_pairs_from_notes(notes)
+    # print(notes)
+    # print(type(notes))
 
+    extracted_pairs = extract_pairs_from_notes(notes)
+    
+    percent_used = st.slider(
+    "How selective should AI be?",
+    min_value=10,
+    max_value=100,
+    value=70,
+    step=5,
+    help="Lower percentages only use the most important flashcards. Higher percentages include more flashcards."
+    )
+    num_to_use = math.ceil(len(extracted_pairs) * percent_used / 100)
+    extracted_pairs = extracted_pairs[:num_to_use]
+    
     if notes.strip():
         st.caption(f"Detected {len(extracted_pairs)} possible study items from your notes.")
 
