@@ -1,5 +1,5 @@
 import re
-from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 
 '''
@@ -11,57 +11,57 @@ output: list of tuples with (word, definition)
 
 '''
 
-def rank_pairs_with_tfidf(pairs):
-    """
-    Takes pairs in the form:
-    (term, definition)
+# def rank_pairs_with_tfidf(pairs):
+#     """
+#     Takes pairs in the form:
+#     (term, definition)
 
-    Returns:
-    (term, definition, importance_score)
-    sorted from most important to least important.
-    """
+#     Returns:
+#     (term, definition, importance_score)
+#     sorted from most important to least important.
+#     """
 
-    if len(pairs) == 0:
-        return []
+#     if len(pairs) == 0:
+#         return []
 
-    if len(pairs) == 1:
-        term, definition = pairs[0]
-        return [(term, definition, 1.0)]
+#     if len(pairs) == 1:
+#         term, definition = pairs[0]
+#         return [(term, definition, 1.0)]
 
-    # Use term + definition as the text TF-IDF looks at
-    chunks = []
+#     # Use term + definition as the text TF-IDF looks at
+#     chunks = []
 
-    for term, definition in pairs:
-        chunks.append(term + " " + definition)
+#     for term, definition in pairs:
+#         chunks.append(term + " " + definition)
 
 
-    #unsupervised learning part!!
-    vectorizer = TfidfVectorizer(stop_words="english")
-    tfidf_matrix = vectorizer.fit_transform(chunks)
+#     #unsupervised learning part!!
+#     vectorizer = TfidfVectorizer(stop_words="english")
+#     tfidf_matrix = vectorizer.fit_transform(chunks)
 
-    scores = np.asarray(tfidf_matrix.sum(axis=1)).flatten()
+#     scores = np.asarray(tfidf_matrix.sum(axis=1)).flatten()
 
-    max_score = scores.max()
+#     max_score = scores.max()
 
-    ranked_pairs = []
+#     ranked_pairs = []
 
-    for i, score in enumerate(scores):
-        term, definition = pairs[i]
+#     for i, score in enumerate(scores):
+#         term, definition = pairs[i]
 
-        if max_score > 0:
-            importance = score / max_score
-        else:
-            importance = 0
+#         if max_score > 0:
+#             importance = score / max_score
+#         else:
+#             importance = 0
 
-        ranked_pairs.append((term, definition, importance))
+#         ranked_pairs.append((term, definition, importance))
 
-    ranked_pairs.sort(key=lambda x: x[2], reverse=True)
+#     ranked_pairs.sort(key=lambda x: x[2], reverse=True)
 
-    result_pairs = []
-    for pair in ranked_pairs:
-        result_pairs.append((ranked_pairs[0], ranked_pairs[1]))
+#     result_pairs = []
+#     for pair in ranked_pairs:
+#         result_pairs.append((ranked_pairs[0], ranked_pairs[1]))
 
-    return result_pairs
+#     return result_pairs
 
 
 def extract_pairs_from_notes(text):
@@ -113,7 +113,7 @@ def extract_pairs_from_notes(text):
             
         # print(pairs)
         
-        new_pairs = rank_pairs_with_tfidf(pairs)
+        # new_pairs = rank_pairs_with_tfidf(pairs)
         # print(new_pairs)
         return pairs
     
