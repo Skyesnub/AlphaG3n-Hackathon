@@ -1,5 +1,6 @@
 import streamlit as st
 from PIL import Image
+from backend import save_progress, show_auth_sidebar
 from tabs.home import run_home_page
 from tabs.planner import run_planner
 from tabs.study_tools import run_study_tools
@@ -37,6 +38,10 @@ st.markdown("""
 
 st.sidebar.image("assets/actual_logo.png", use_container_width=True)
 
+if not show_auth_sidebar():
+    st.info("Log in or create an account to save your progress.")
+    st.stop()
+
 page = st.sidebar.radio(
     "Go to",
     [
@@ -62,3 +67,5 @@ elif page == "Progress":
 
 elif page == "Settings":
     run_settings()
+
+save_progress()
