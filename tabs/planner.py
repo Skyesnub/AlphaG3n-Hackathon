@@ -262,6 +262,19 @@ def minutes_to_time_str(mins):
     return f"{h12}:{m:02d} {period}"
 
 
+def prune_completed_tasks(limit=5):
+    done_tasks = [task for task in st.session_state.tasks if task.get("status") == "Done"]
+    if len(done_tasks) <= limit:
+        return 0
+
+    done_tasks.sort(key=lambda task: task.get("due_date", "9999-12-31"))
+    ids_to_delete = {task["id"] for task in done_tasks[:-limit]}
+    st.session_state.tasks = [
+        task for task in st.session_state.tasks if task.get("id") not in ids_to_delete
+    ]
+    return len(ids_to_delete)
+
+
 def run_planner():
     apply_settings()
     inject_planner_styles()
@@ -330,6 +343,12 @@ def run_planner():
     # TASK LIST
     # -----------------------------------------------------------------------
     section_card("📋 Assignments", "See what is coming up, what is done, and what needs your attention next.")
+    deleted_completed_count = prune_completed_tasks()
+
+    if deleted_completed_count > 0:
+        st.caption(
+            f"Removed {deleted_completed_count} older completed assignment(s) to keep your recent history tidy."
+        )
 
     if not st.session_state.tasks:
         st.markdown(
@@ -347,10 +366,7 @@ def run_planner():
         incomplete = [t for t in sorted_tasks if t.get("status") != "Done"]
         done = [t for t in sorted_tasks if t.get("status") == "Done"]
 
-        done_to_show = done[-5:] if len(done) > 5 else done
-        hidden_count = len(done) - len(done_to_show)
-
-        all_to_show = incomplete + done_to_show
+        all_to_show = incomplete + done
 
         for task in all_to_show:
 
@@ -385,7 +401,7 @@ def run_planner():
 
                 with st.expander("Details", expanded=False):
 
-                    col1, col2, col3 = st.columns(3)
+                    col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
 
                     with col1:
                         st.write(f"⏱ **Time:** {fmt_time(task['minutes'])}")
@@ -411,8 +427,13 @@ def run_planner():
                                     t["status"] = new_status
                             st.rerun()
 
-                            if hidden_count > 0:
-                                st.caption(f"+ {hidden_count} older completed assignment(s) not shown.")
+                    with col4:
+                        st.write("")
+                        if st.button("🗑", key=f"delete_task_{task['id']}", help="Delete assignment"):
+                            st.session_state.tasks = [
+                                t for t in st.session_state.tasks if t["id"] != task["id"]
+                            ]
+                            st.rerun()
 
     st.divider()
 

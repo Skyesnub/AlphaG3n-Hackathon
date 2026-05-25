@@ -28,6 +28,18 @@ TUPLE_LIST_KEYS = {
 
 def get_supabase():
     if "supabase_client" not in st.session_state:
+        missing_keys = [
+            key
+            for key in ("SUPABASE_URL", "SUPABASE_ANON_KEY")
+            if key not in st.secrets
+        ]
+        if missing_keys:
+            st.error(
+                "Supabase is not configured yet. Add SUPABASE_URL and "
+                "SUPABASE_ANON_KEY to your Streamlit secrets."
+            )
+            st.stop()
+
         st.session_state.supabase_client = create_client(
             st.secrets["SUPABASE_URL"],
             st.secrets["SUPABASE_ANON_KEY"],
