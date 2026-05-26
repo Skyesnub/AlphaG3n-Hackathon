@@ -217,6 +217,11 @@ def mini_card(content):
     st.markdown(f'<div class="mini-card">{content}</div>', unsafe_allow_html=True)
 
 
+def format_minutes(minutes):
+    hours, mins = divmod(int(minutes), 60)
+    return f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
+
+
 def run_progress():
     apply_settings()
     apply_progress_styles()
@@ -371,12 +376,16 @@ def run_progress():
     if not st.session_state.study_sessions:
         st.info("No study sessions recorded yet. Start a study session from the Planner to track time here.")
     else:
-        # Aggregate total minutes per subject
+        # Aggregate total minutes per subject and for today's study total
         subject_totals = {}
+        today_studied = 0
+        today_str = today.strftime("%Y-%m-%d")
         for session in st.session_state.study_sessions:
             subject = session.get("subject", "Unknown")
             mins = session.get("minutes", 0)
             subject_totals[subject] = subject_totals.get(subject, 0) + mins
+            if session.get("date") == today_str:
+                today_studied += mins
 
         # Sort by most studied
         sorted_subjects = sorted(subject_totals.items(), key=lambda x: x[1], reverse=True)
@@ -427,13 +436,15 @@ def run_progress():
                 f"You've completed approximately {studied_pct}% of your total estimated workload."
             )
 
-        total_h, total_m = divmod(total_studied, 60)
-        stat_card("Total Study Time", f"{total_h}h {total_m}m" if total_h > 0 else f"{total_m}m")
+        col1, col2 = st.columns(2)
+        with col1:
+            stat_card("Total Study Time", format_minutes(total_studied))
+        with col2:
+            stat_card("Study Time Today", format_minutes(today_studied))
 
         st.write("**By subject:**")
         for subject, mins in sorted_subjects:
-            h, m = divmod(mins, 60)
-            time_str = f"{h}h {m}m" if h > 0 else f"{m}m"
+            time_str = format_minutes(mins)
             pct = int((mins / total_studied) * 100) if total_studied > 0 else 0
             mini_card(f"<b>{subject}</b> — {time_str}")
             st.progress(pct / 100, text=f"{pct}% of total study time")
